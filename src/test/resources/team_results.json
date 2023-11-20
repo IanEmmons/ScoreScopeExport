@@ -1,0 +1,313 @@
+{
+	"total_pages": 1,
+	"current_page": 1,
+	"total_records": 18,
+	"records": [
+		{
+			"id": "64aef474184bac00285d5cb8",
+			"field_1857": [
+				{
+					"id": "64de05c832caaa0029313e0b",
+					"identifier": "Lake Braddock 2023 Invitational"
+				}
+			],
+			"field_1143.field_12": "B",
+			"field_12": "B",
+			"field_1478": "B01",
+			"field_1202": "VASO Test School Blue",
+			"field_1979": false,
+			"field_1754": 21,
+			"field_1947": "",
+			"field_1948": 21
+		},
+		{
+			"id": "64de6af94ded060029d0ab9f",
+			"field_1857": [
+				{
+					"id": "64de05c832caaa0029313e0b",
+					"identifier": "Lake Braddock 2023 Invitational"
+				}
+			],
+			"field_1143.field_12": "B",
+			"field_12": "B",
+			"field_1478": "B02",
+			"field_1202": "VASO Martian Academy Marvin",
+			"field_1979": false,
+			"field_1754": 14,
+			"field_1947": "",
+			"field_1948": 14
+		},
+		{
+			"id": "64de6af94ded060029d0abe6",
+			"field_1857": [
+				{
+					"id": "64de05c832caaa0029313e0b",
+					"identifier": "Lake Braddock 2023 Invitational"
+				}
+			],
+			"field_1143.field_12": "B",
+			"field_12": "B",
+			"field_1478": "B03",
+			"field_1202": "VASO Martian Academy Bradbury",
+			"field_1979": false,
+			"field_1754": 21,
+			"field_1947": "",
+			"field_1948": 21
+		},
+		{
+			"id": "64de6b6613f1940028e53ff7",
+			"field_1857": [
+				{
+					"id": "64de05c832caaa0029313e0b",
+					"identifier": "Lake Braddock 2023 Invitational"
+				}
+			],
+			"field_1143.field_12": "B",
+			"field_12": "B",
+			"field_1478": "B04",
+			"field_1202": "VASO Science Institute Centimeters",
+			"field_1979": false,
+			"field_1754": 26,
+			"field_1947": "",
+			"field_1948": 26
+		},
+		{
+			"id": "64de6b0c21f2410026de56cd",
+			"field_1857": [
+				{
+					"id": "64de05c832caaa0029313e0b",
+					"identifier": "Lake Braddock 2023 Invitational"
+				}
+			],
+			"field_1143.field_12": "B",
+			"field_12": "B",
+			"field_1478": "B05",
+			"field_1202": "VASO Magnus Carlsen MS Rooks",
+			"field_1979": false,
+			"field_1754": 37,
+			"field_1947": "",
+			"field_1948": 37
+		},
+		{
+			"id": "64de6b0d21f2410026de5714",
+			"field_1857": [
+				{
+					"id": "64de05c832caaa0029313e0b",
+					"identifier": "Lake Braddock 2023 Invitational"
+				}
+			],
+			"field_1143.field_12": "B",
+			"field_12": "B",
+			"field_1478": "B06",
+			"field_1202": "VASO Magnus Carlsen MS Knights",
+			"field_1979": false,
+			"field_1754": 34,
+			"field_1947": "",
+			"field_1948": 34
+		},
+		{
+			"id": "64de6e2a9cbc0e0028ac9704",
+			"field_1857": [
+				{
+					"id": "64de05c832caaa0029313e0b",
+					"identifier": "Lake Braddock 2023 Invitational"
+				}
+			],
+			"field_1143.field_12": "B",
+			"field_12": "B",
+			"field_1478": "B07",
+			"field_1202": "VASO Tom Brady School Defenders",
+			"field_1979": false,
+			"field_1754": 28,
+			"field_1947": "",
+			"field_1948": 28
+		},
+		{
+			"id": "64aef5d5f24d020029ee0870",
+			"field_1857": [
+				{
+					"id": "64de05c832caaa0029313e0b",
+					"identifier": "Lake Braddock 2023 Invitational"
+				}
+			],
+			"field_1143.field_12": "C",
+			"field_12": "C",
+			"field_1478": "C01",
+			"field_1202": "VASO Test School Green",
+			"field_1979": false,
+			"field_1754": 3,
+			"field_1947": "",
+			"field_1948": 3
+		},
+		{
+			"id": "64de6aeb31875000297ed0b1",
+			"field_1857": [
+				{
+					"id": "64de05c832caaa0029313e0b",
+					"identifier": "Lake Braddock 2023 Invitational"
+				}
+			],
+			"field_1143.field_12": "C",
+			"field_12": "C",
+			"field_1478": "C02",
+			"field_1202": "VASO Lovelace Bits",
+			"field_1979": false,
+			"field_1754": 5,
+			"field_1947": "",
+			"field_1948": 5
+		},
+		{
+			"id": "64de6aeb31875000297ed0f9",
+			"field_1857": [
+				{
+					"id": "64de05c832caaa0029313e0b",
+					"identifier": "Lake Braddock 2023 Invitational"
+				}
+			],
+			"field_1143.field_12": "C",
+			"field_12": "C",
+			"field_1478": "C03",
+			"field_1202": "VASO Lovelace Bytes",
+			"field_1979": false,
+			"field_1754": 2,
+			"field_1947": "",
+			"field_1948": 2
+		},
+		{
+			"id": "64de6aec31875000297ed13d",
+			"field_1857": [
+				{
+					"id": "64de05c832caaa0029313e0b",
+					"identifier": "Lake Braddock 2023 Invitational"
+				}
+			],
+			"field_1143.field_12": "C",
+			"field_12": "C",
+			"field_1478": "C04",
+			"field_1202": "VASO Lovelace Analytics",
+			"field_1979": false,
+			"field_1754": 6,
+			"field_1947": "",
+			"field_1948": 6
+		},
+		{
+			"id": "64de6afa4ded060029d0ac2a",
+			"field_1857": [
+				{
+					"id": "64de05c832caaa0029313e0b",
+					"identifier": "Lake Braddock 2023 Invitational"
+				}
+			],
+			"field_1143.field_12": "C",
+			"field_12": "C",
+			"field_1478": "C05",
+			"field_1202": "VASO Martian Academy Astronauts",
+			"field_1979": false,
+			"field_1754": 4,
+			"field_1947": "",
+			"field_1948": 4
+		},
+		{
+			"id": "64de6b757c04f50027dfbf7b",
+			"field_1857": [
+				{
+					"id": "64de05c832caaa0029313e0b",
+					"identifier": "Lake Braddock 2023 Invitational"
+				}
+			],
+			"field_1143.field_12": "C",
+			"field_12": "C",
+			"field_1478": "C06",
+			"field_1202": "VASO Charger Red",
+			"field_1979": false,
+			"field_1754": 13,
+			"field_1947": "",
+			"field_1948": 13
+		},
+		{
+			"id": "64de6b767c04f50027dfbfc2",
+			"field_1857": [
+				{
+					"id": "64de05c832caaa0029313e0b",
+					"identifier": "Lake Braddock 2023 Invitational"
+				}
+			],
+			"field_1143.field_12": "C",
+			"field_12": "C",
+			"field_1478": "C07",
+			"field_1202": "VASO Charger Blue",
+			"field_1979": false,
+			"field_1754": 1,
+			"field_1947": "",
+			"field_1948": 1
+		},
+		{
+			"id": "64de6b6713f1940028e5403e",
+			"field_1857": [
+				{
+					"id": "64de05c832caaa0029313e0b",
+					"identifier": "Lake Braddock 2023 Invitational"
+				}
+			],
+			"field_1143.field_12": "C",
+			"field_12": "C",
+			"field_1478": "C08",
+			"field_1202": "VASO Science Institute Joules",
+			"field_1979": false,
+			"field_1754": 6,
+			"field_1947": "",
+			"field_1948": 6
+		},
+		{
+			"id": "64de6b6713f1940028e54085",
+			"field_1857": [
+				{
+					"id": "64de05c832caaa0029313e0b",
+					"identifier": "Lake Braddock 2023 Invitational"
+				}
+			],
+			"field_1143.field_12": "C",
+			"field_12": "C",
+			"field_1478": "C09",
+			"field_1202": "VASO Science Institute Ohms",
+			"field_1979": false,
+			"field_1754": 12,
+			"field_1947": "",
+			"field_1948": 12
+		},
+		{
+			"id": "64de6b6813f1940028e540c9",
+			"field_1857": [
+				{
+					"id": "64de05c832caaa0029313e0b",
+					"identifier": "Lake Braddock 2023 Invitational"
+				}
+			],
+			"field_1143.field_12": "C",
+			"field_12": "C",
+			"field_1478": "C10",
+			"field_1202": "VASO Science Institute Ergs",
+			"field_1979": false,
+			"field_1754": 11,
+			"field_1947": "",
+			"field_1948": 11
+		},
+		{
+			"id": "64de6e2b9cbc0e0028ac974d",
+			"field_1857": [
+				{
+					"id": "64de05c832caaa0029313e0b",
+					"identifier": "Lake Braddock 2023 Invitational"
+				}
+			],
+			"field_1143.field_12": "C",
+			"field_12": "C",
+			"field_1478": "C11",
+			"field_1202": "VASO Tom Brady School Pigskins",
+			"field_1979": false,
+			"field_1754": 8,
+			"field_1947": "",
+			"field_1948": 8
+		}
+	]
+}

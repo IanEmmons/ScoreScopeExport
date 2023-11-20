@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UncheckedIOException;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
@@ -23,6 +24,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
+import com.google.gson.JsonElement;
+
 public class Util {
 	public static final Charset CHARSET = StandardCharsets.UTF_8;
 	public static final String JSON_MEDIA_TYPE = "application/json";
@@ -34,6 +37,40 @@ public class Util {
 		return (str == null)
 			? null
 			: WHITESPACE.matcher(str.strip()).replaceAll(" ");
+	}
+
+	public static BigDecimal getAsBigDecimal(JsonElement element) {
+		if (element == null) {
+			return BigDecimal.ZERO;
+		} else if (!element.isJsonPrimitive()) {
+			throw new IllegalArgumentException(
+				"Expecting number or blank, but found non-primitive value");
+		} else {
+			var primitive = element.getAsJsonPrimitive();
+			return primitive.isNumber()
+				? primitive.getAsBigDecimal()
+				: BigDecimal.ZERO;
+		}
+	}
+
+	public static boolean getAsBoolean(JsonElement element) {
+		if (element == null) {
+			return false;
+		} else if (!element.isJsonPrimitive()) {
+			throw new IllegalArgumentException(
+				"Expecting number or boolean, but found non-primitive value");
+		} else {
+			var primitive = element.getAsJsonPrimitive();
+			if (primitive.isNumber()) {
+				return (primitive.getAsInt() != 0);
+			} else if (primitive.isBoolean()) {
+				return primitive.getAsBoolean();
+			} else {
+				throw new IllegalArgumentException(
+					"Expecting number or boolean, but found '%1$s'"
+						.formatted(primitive.getAsString()));
+			}
+		}
 	}
 
 	public static File appendToStem(File file, String stemSuffix) {

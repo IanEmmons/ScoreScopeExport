@@ -54,8 +54,8 @@ public class PortalRetriever<Item> {
 		public List<Item> records;
 	}
 
-	private static final String REPORT_URL = "https://api.knack.com/v1/pages/scene_%1$s/"
-		+ "views/view_%2$s/records?format=raw&page=%3$d&rows_per_page=%4$d";
+	private static final String REPORT_URL = "https://api.knack.com/v1/pages/"
+		+ "%1$s/records?format=raw&page=%2$d&rows_per_page=%3$d";
 	private static final int PAGE_SIZE = 100;
 
 	// From the config and factory:
@@ -133,12 +133,13 @@ public class PortalRetriever<Item> {
 	}
 
 	private HttpRequest getHttpRequest(int currentPage) {
-		var url = REPORT_URL.formatted(Config.inst().getPortalScene(reportName),
-			Config.inst().getPortalView(reportName), currentPage, PAGE_SIZE);
+		var url = REPORT_URL.formatted(Config.inst().getPortalUrlPath(reportName),
+			currentPage, PAGE_SIZE);
 		return HttpRequest.newBuilder(URI.create(url))
 			.GET()
 			.header("Accept", Util.JSON_MEDIA_TYPE)
 			.header("X-Knack-Application-Id", Config.inst().getPortalApplicationId())
+			.header("X-Knack-REST-API-KEY", "knack")
 			.header("Authorization", PortalUserToken.inst().getUserToken())
 			.build();
 	}
@@ -185,21 +186,21 @@ public class PortalRetriever<Item> {
 
 	public static void main(String [] args) {
 		try {
-			PortalRetriever<Student> rosterRetriever = StudentRetrieverFactory.create();
-			PortalRetriever<Coach> coachRetriever = CoachRetrieverFactory.create();
+			PortalRetriever<TeamRankByEvent> ranksRetriever = TeamRankByEventRetrieverFactory.create();
+			PortalRetriever<TeamResults> teamResultsRetriever = TeamResultsRetrieverFactory.create();
 
-			//rosterRetriever.saveRawReport();
-			//coachRetriever.saveRawReport();
+			//ranksRetriever.saveRawReport();
+			//teamResultsRetriever.saveRawReport();
 
-			rosterRetriever.saveReport();
-			List<Student> students = rosterRetriever.readLatestReportFile();
-			System.out.format("Found %1$d students:%n", students.size());
-			//students.forEach(student -> System.out.format("   %1$s%n", student));
+			ranksRetriever.saveReport();
+			List<TeamRankByEvent> teamRanksByEvent = ranksRetriever.readLatestReportFile();
+			System.out.format("Found %1$d team ranks by event:%n", teamRanksByEvent.size());
+			//teamRanksByEvent.forEach(teamRankByEvent -> System.out.format("   %1$s%n", teamRankByEvent));
 
-			coachRetriever.saveReport();
-			List<Coach> coaches = coachRetriever.readLatestReportFile();
-			System.out.format("Found %1$d coaches:%n", coaches.size());
-			//coaches.forEach(coach -> System.out.format("   %1$s%n", coach));
+			teamResultsRetriever.saveReport();
+			List<TeamResults> teamResults = teamResultsRetriever.readLatestReportFile();
+			System.out.format("Found %1$d team results:%n", teamResults.size());
+			//teamResults.forEach(teamResult -> System.out.format("   %1$s%n", teamResult));
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}

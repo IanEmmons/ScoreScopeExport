@@ -32,9 +32,9 @@ application {
 	mainClass.set("org.virginiaso.score_scope_export.App")
 }
 
-//task getPortalRoster(type: JavaExec) {
-//	dependsOn "classes"
-//	mainClass = "org.virginiaso.score_scope_export.PortalRetriever"
-//	classpath = sourceSets.main.runtimeClasspath
-//	systemProperty "portal.password", "$portalPassword"
-//}
+task<JavaExec>("getPortalData") {
+	dependsOn("classes")
+	mainClass = "org.virginiaso.score_scope_export.PortalRetriever"
+	classpath = java.sourceSets["main"].runtimeClasspath
+	systemProperty("portal.password", "${project.properties["portalPassword"]}")
+}
