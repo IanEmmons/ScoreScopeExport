@@ -4,3 +4,5 @@
 .settings/
 bin/
 build/
+duosmium-upload.xlsx
+~$*.xlsx

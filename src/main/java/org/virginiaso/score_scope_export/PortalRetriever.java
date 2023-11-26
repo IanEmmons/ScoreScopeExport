@@ -186,11 +186,18 @@ public class PortalRetriever<Item> {
 
 	public static void main(String [] args) {
 		try {
+			PortalRetriever<Tournament> tourneyRetriever = TournamentRetrieverFactory.create();
 			PortalRetriever<TeamRankByEvent> ranksRetriever = TeamRankByEventRetrieverFactory.create();
 			PortalRetriever<TeamResults> teamResultsRetriever = TeamResultsRetrieverFactory.create();
 
+			//tourneyRetriever.saveRawReport();
 			//ranksRetriever.saveRawReport();
 			//teamResultsRetriever.saveRawReport();
+
+			tourneyRetriever.saveReport();
+			List<Tournament> tournaments = tourneyRetriever.readLatestReportFile();
+			System.out.format("Found %1$d tournaments:%n", tournaments.size());
+			//tournaments.forEach(tournament -> System.out.format("   %1$s%n", tournament));
 
 			ranksRetriever.saveReport();
 			List<TeamRankByEvent> teamRanksByEvent = ranksRetriever.readLatestReportFile();

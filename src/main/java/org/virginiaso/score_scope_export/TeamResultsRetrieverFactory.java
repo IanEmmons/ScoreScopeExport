@@ -36,7 +36,11 @@ public class TeamResultsRetrieverFactory {
 			result.add("field_1143.field_12", new JsonPrimitive(src.division()));
 			result.add("field_12", new JsonPrimitive(src.division()));
 			result.add("field_1478", new JsonPrimitive(src.teamNum()));
-			result.add("field_1202", new JsonPrimitive(src.teamName()));
+			result.add("field_1142.field_1862", new JsonPrimitive(src.schoolName()));
+			result.add("field_1862", new JsonPrimitive(src.schoolName()));
+			result.add("field_2039", new JsonPrimitive(src.teamName()));
+			result.add("field_1142.field_2037", new JsonPrimitive(src.cityState()));
+			result.add("field_2037", new JsonPrimitive(src.cityState()));
 			result.add("field_1979", new JsonPrimitive(src.isExhibitionTeam()));
 			result.add("field_1754", new JsonPrimitive(src.scoreNoPenalty()));
 			result.add("field_1947", new JsonPrimitive(src.penalty()));
@@ -58,13 +62,16 @@ public class TeamResultsRetrieverFactory {
 			var division = Util.normalizeSpace(jObj.get("field_12").getAsString());
 			String teamId = Util.normalizeSpace(jObj.get("id").getAsString());
 			String teamNum = Util.normalizeSpace(jObj.get("field_1478").getAsString());
-			String teamName = Util.normalizeSpace(jObj.get("field_1202").getAsString());
+			String schoolName = Util.normalizeSpace(jObj.get("field_1862").getAsString());
+			String teamName = Util.normalizeSpace(jObj.get("field_2039").getAsString());
+			String cityState = Util.normalizeSpace(jObj.get("field_2037").getAsString());
 			boolean isExhibitionTeam = jObj.get("field_1979").getAsBoolean();
 			BigDecimal scoreNoPenalty = Util.getAsBigDecimal(jObj.get("field_1754"));
 			BigDecimal penalty = Util.getAsBigDecimal(jObj.get("field_1947"));
 			BigDecimal finalScore = Util.getAsBigDecimal(jObj.get("field_1948"));
 			return new TeamResults(tournamentId, tournamentName, division, teamId, teamNum,
-				teamName, isExhibitionTeam, scoreNoPenalty, penalty, finalScore);
+				schoolName, teamName, cityState, isExhibitionTeam, scoreNoPenalty, penalty,
+				finalScore);
 		}
 	}
 
