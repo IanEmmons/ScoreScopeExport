@@ -71,7 +71,7 @@ public class TournamentRetrieverFactory {
 			.setPrettyPrinting()
 			.registerTypeAdapter(Tournament.class, new TournamentSerializer())
 			.create();
-		return new PortalRetriever<>(gson, "tournaments",
+		return new PortalRetriever<>(gson, KnackView.TOURNAMENTS,
 			new TypeToken<ReportResponse<Tournament>>(){}.getType());
 	}
 }

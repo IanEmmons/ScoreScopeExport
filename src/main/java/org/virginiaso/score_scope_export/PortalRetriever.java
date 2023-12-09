@@ -61,7 +61,7 @@ public class PortalRetriever<Item> {
 	// From the config and factory:
 	private final Type reportResponseType;
 	private final Gson gson;
-	private final String reportName;
+	private final KnackView knackView;
 	private final File reportDir;
 	private final String fileNameFormat;
 	private final Pattern fileNamePattern;
@@ -71,13 +71,13 @@ public class PortalRetriever<Item> {
 	private int lastPageRead;	// 1-based
 	private List<Item> reportItems;
 
-	public PortalRetriever(Gson gson, String reportName, Type reportResponseType) {
+	public PortalRetriever(Gson gson, KnackView knackView, Type reportResponseType) {
 		this.reportResponseType = reportResponseType;
 		this.gson = gson;
-		this.reportName = reportName;
-		reportDir = Config.inst().getPortalReportDir();
-		fileNameFormat = reportName + "-%1$tFT%1$tT.json";
-		fileNamePattern = Pattern.compile(reportName + "-.*\\.json");
+		this.knackView = knackView;
+		reportDir = Config.inst().getDownloadDir();
+		fileNameFormat = knackView.toString() + "-%1$tFT%1$tT.json";
+		fileNamePattern = Pattern.compile(knackView.toString() + "-.*\\.json");
 
 		totalPages = -1;
 		lastPageRead = -1;
@@ -90,15 +90,17 @@ public class PortalRetriever<Item> {
 	public void saveRawReport() throws IOException {
 		var httpRequest = getHttpRequest(1);
 		var stringHolder = new StringHolder();
-		HttpClient.newHttpClient()
-			.sendAsync(httpRequest, BodyHandlers.ofString())
-			.thenApply(HttpResponse::body)
-			.thenAccept(body -> stringHolder.string = body)
-			.join();
+		try (var httpClient = HttpClient.newHttpClient()) {
+			httpClient
+				.sendAsync(httpRequest, BodyHandlers.ofString())
+				.thenApply(HttpResponse::body)
+				.thenAccept(body -> stringHolder.string = body)
+				.join();
 
-		var fileName = "raw-portal-%1$s-report-body.json".formatted(reportName);
-		try (var pw = new PrintWriter(fileName, Util.CHARSET)) {
-			pw.print(stringHolder.string);
+			var fileName = "raw-portal-%1$s-report-body.json".formatted(knackView);
+			try (var pw = new PrintWriter(fileName, Util.CHARSET)) {
+				pw.print(stringHolder.string);
+			}
 		}
 	}
 
@@ -118,27 +120,30 @@ public class PortalRetriever<Item> {
 		}
 	}
 
-	private void retrieveReport() {
+	public List<Item> retrieveReport() {
 		for (int currentPage = 1;; ++currentPage) {
 			var httpRequest = getHttpRequest(currentPage);
-			HttpClient.newHttpClient()
-				.sendAsync(httpRequest, BodyHandlers.ofInputStream())
-				.thenApply(HttpResponse::body)
-				.thenAccept(is -> reportItems.addAll(readJsonReport(is, this)))
-				.join();
-			if (lastPageRead >= totalPages) {
-				break;
+			try (var httpClient = HttpClient.newHttpClient()) {
+				httpClient
+					.sendAsync(httpRequest, BodyHandlers.ofInputStream())
+					.thenApply(HttpResponse::body)
+					.thenAccept(is -> reportItems.addAll(readJsonReport(is, this)))
+					.join();
+				if (lastPageRead >= totalPages) {
+					break;
+				}
 			}
 		}
+		return reportItems;
 	}
 
 	private HttpRequest getHttpRequest(int currentPage) {
-		var url = REPORT_URL.formatted(Config.inst().getPortalUrlPath(reportName),
+		var url = REPORT_URL.formatted(Config.inst().getKnackUrlPath(knackView),
 			currentPage, PAGE_SIZE);
 		return HttpRequest.newBuilder(URI.create(url))
 			.GET()
 			.header("Accept", Util.JSON_MEDIA_TYPE)
-			.header("X-Knack-Application-Id", Config.inst().getPortalApplicationId())
+			.header("X-Knack-Application-Id", Config.inst().getKnackAppId())
 			.header("X-Knack-REST-API-KEY", "knack")
 			.header("Authorization", PortalUserToken.inst().getUserToken())
 			.build();
@@ -161,7 +166,7 @@ public class PortalRetriever<Item> {
 
 		try (InputStream is = new FileInputStream(reportFile)) {
 			List<Item> items = readJsonReport(is, (PortalRetriever<Item>) null);
-			timer.stopAndReport("Parsed Portal %1$s file".formatted(reportName));
+			timer.stopAndReport("Parsed Knack %1$s file".formatted(knackView));
 			return items;
 		}
 	}

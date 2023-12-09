@@ -85,7 +85,7 @@ public class TeamRankByEventRetrieverFactory {
 			.setPrettyPrinting()
 			.registerTypeAdapter(TeamRankByEvent.class, new TeamRankByEventSerializer())
 			.create();
-		return new PortalRetriever<>(gson, "ranks",
+		return new PortalRetriever<>(gson, KnackView.RANKS,
 			new TypeToken<ReportResponse<TeamRankByEvent>>(){}.getType());
 	}
 }

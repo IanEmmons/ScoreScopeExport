@@ -82,7 +82,7 @@ public class TeamResultsRetrieverFactory {
 			.setPrettyPrinting()
 			.registerTypeAdapter(TeamResults.class, new TeamResultsSerializer())
 			.create();
-		return new PortalRetriever<>(gson, "team_results",
+		return new PortalRetriever<>(gson, KnackView.TEAM_RESULTS,
 			new TypeToken<ReportResponse<TeamResults>>(){}.getType());
 	}
 }

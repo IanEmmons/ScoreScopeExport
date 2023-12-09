@@ -36,18 +36,23 @@ public class PortalUserToken {
 
 	private PortalUserToken() {
 		userToken = null;
-		var url = TOKEN_URL.formatted(Config.inst().getPortalApplicationId());
-		var requestBody = TOKEN_BODY.formatted(Config.inst().getPortalUser(),
-			Config.inst().getPortalPassword());
+	}
+
+	public void initialize(KnackApp knackApp, String userName, String password) {
+		userToken = null;
+		var url = TOKEN_URL.formatted(Config.inst().getKnackAppId(knackApp));
+		var requestBody = TOKEN_BODY.formatted(userName, password);
 		var httpRequest = HttpRequest.newBuilder(URI.create(url))
 			.POST(BodyPublishers.ofString(requestBody))
 			.header("Content-Type", Util.JSON_MEDIA_TYPE)
 			.build();
-		HttpClient.newHttpClient()
-			.sendAsync(httpRequest, BodyHandlers.ofString())
-			.thenApply(HttpResponse::body)
-			.thenAccept(this::interpretResponse)
-			.join();
+		try (var httpClient = HttpClient.newHttpClient()) {
+			httpClient
+				.sendAsync(httpRequest, BodyHandlers.ofString())
+				.thenApply(HttpResponse::body)
+				.thenAccept(this::interpretResponse)
+				.join();
+		}
 		System.out.format("Found user token '%1$s'%n", userToken);
 	}
 

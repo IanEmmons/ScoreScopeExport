@@ -48,6 +48,8 @@ public class App {
 	}
 
 	private void run() throws IOException {
+		PortalUserToken.inst().initialize(Config.inst().getKnackAppEnumerator(),
+			Config.inst().getKnackUserName(), Config.inst().getKnackPassword());
 		Tournament tournament = TournamentRetrieverFactory.create()
 			.readLatestReportFile()
 			.stream()

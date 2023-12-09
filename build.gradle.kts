@@ -1,5 +1,6 @@
 plugins {
 	application
+	id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
 repositories {
@@ -16,22 +17,30 @@ dependencies {
 	implementation("org.apache.logging.log4j:log4j-core:2.22.0")
 }
 
+java {
+	toolchain {
+		languageVersion.set(JavaLanguageVersion.of(21))
+	}
+}
+
+application {
+	//mainClass.set("org.virginiaso.score_scope_export.App")
+	//mainClass.set("org.virginiaso.score_scope_export.gui.GuiApp")
+	mainClass.set("org.virginiaso.score_scope_export.gui.ExportApplication")
+	//mainClass.set("org.virginiaso.score_scope_export.gui.Survey")
+}
+
+javafx {
+	version = "21.0.1"
+	modules("javafx.controls" /*, "javafx.fxml" */)
+}
+
 testing {
 	suites {
 		val test by getting(JvmTestSuite::class) {
 			useJUnitJupiter("5.9.3")
 		}
 	}
-}
-
-java {
-	toolchain {
-		languageVersion.set(JavaLanguageVersion.of(17))
-	}
-}
-
-application {
-	mainClass.set("org.virginiaso.score_scope_export.App")
 }
 
 task<JavaExec>("createDuosmiumUpload") {
@@ -44,5 +53,5 @@ task<JavaExec>("getPortalData") {
 	dependsOn("classes")
 	mainClass = "org.virginiaso.score_scope_export.PortalRetriever"
 	classpath = java.sourceSets["main"].runtimeClasspath
-	systemProperty("portal.password", "${project.properties["portalPassword"]}")
+	systemProperty("knack.password", "${project.properties["knackPassword"]}")
 }

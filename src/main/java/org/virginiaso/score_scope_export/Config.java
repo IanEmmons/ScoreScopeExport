@@ -13,12 +13,11 @@ public class Config {
 	private final Properties props;
 	private final String tournamentName;
 	private final String tournamentDivision;
-	private final String portalAppName;
-	private final File portalReportDir;
+	private final KnackApp knackAppEnumerator;
+	private final File downloadDir;
 	private final File outputFile;
-	private final String portalUser;
-	private final String portalPassword;
-	private final String portalApplicationId;
+	private final String knackUserName;
+	private final String knackPassword;
 
 	/**
 	 * Get the singleton instance of Config. This follows the "lazy initialization
@@ -33,15 +32,13 @@ public class Config {
 
 	private Config() {
 		props = Util.loadPropertiesFromResource(CONFIGURATION_RESOURCE);
-		tournamentName = props.getProperty("tournament.name");
-		tournamentDivision = props.getProperty("tournament.division");
-		portalAppName = props.getProperty("portal.application.name");
-		portalReportDir = Util.parseFileArgument(props, "portal.report.dir");
-		outputFile = Util.parseFileArgument(props, "output.file");
-		portalUser = props.getProperty("portal.user");
-		portalPassword = props.getProperty("portal.password");
-		var appIdPropKey = "portal.%1$s.application.id".formatted(portalAppName);
-		portalApplicationId = props.getProperty(appIdPropKey);
+		tournamentName = props.getProperty("tournament_name");
+		tournamentDivision = props.getProperty("tournament_division");
+		knackAppEnumerator = KnackApp.valueOf(props.getProperty("application_name"));
+		downloadDir = Util.parseFileArgument(props, "download_dir");
+		outputFile = Util.parseFileArgument(props, "output_file");
+		knackUserName = props.getProperty("knack_user_name");
+		knackPassword = props.getProperty("knack_password");
 	}
 
 	public String getTournamentName() {
@@ -52,36 +49,45 @@ public class Config {
 		return tournamentDivision;
 	}
 
-	public String getPortalAppName() {
-		return portalAppName;
+	public KnackApp getKnackAppEnumerator() {
+		return knackAppEnumerator;
 	}
 
-	public File getPortalReportDir() {
-		return portalReportDir;
+	public File getDownloadDir() {
+		return downloadDir;
 	}
 
 	public File getOutputFile() {
 		return outputFile;
 	}
 
-	public String getPortalUser() {
-		return portalUser;
+	public String getKnackUserName() {
+		return knackUserName;
 	}
 
-	public String getPortalPassword() {
-		return portalPassword;
+	public String getKnackPassword() {
+		return knackPassword;
 	}
 
-	public String getPortalApplicationId() {
-		return portalApplicationId;
+	public String getKnackAppId() {
+		return getKnackAppId(knackAppEnumerator);
 	}
 
-	public String getPortalUrlPath(String reportName) {
-		var propKey = "portal.%1$s.%2$s.scene_view".formatted(portalAppName, reportName);
-		var scene_view = props.getProperty(propKey, "").split(",");
-		if (scene_view.length != 2) {
-			throw new IllegalArgumentException("Configuration item %1$s must contain '<scene#>,<view#>'".formatted(propKey));
+	public String getKnackUrlPath(KnackView knackView) {
+		return getKnackUrlPath(knackAppEnumerator, knackView);
+	}
+
+	public String getKnackAppId(KnackApp knackApp) {
+		return props.getProperty("application_id.%1$s".formatted(knackApp));
+	}
+
+	public String getKnackUrlPath(KnackApp knackApp, KnackView knackView) {
+		var propKey = "scene_view.%1$s.%2$s".formatted(knackView, knackApp);
+		var viewNums = props.getProperty(propKey, "").split(",");
+		if (viewNums.length != 2) {
+			throw new IllegalArgumentException(
+				"Configuration item %1$s must contain '<scene#>,<view#>'".formatted(propKey));
 		}
-		return "scene_%1$s/views/view_%2$s".formatted(scene_view[0], scene_view[1]);
+		return "scene_%1$s/views/view_%2$s".formatted(viewNums[0], viewNums[1]);
 	}
 }
