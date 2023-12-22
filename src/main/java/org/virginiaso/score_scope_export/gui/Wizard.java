@@ -15,15 +15,17 @@ public class Wizard extends StackPane {
 	private static final int UNDEFINED = -1;
 
 	private final Stage owner;
-	private final ObservableList<WizardPage> pages;
+	private final ObservableList<WizardPageFactory> pageFactories;
 	private final Stack<Integer> history;
 	private int curPageIdx;
 
-	public Wizard(Stage owner, WizardPage... nodes) {
+	@SafeVarargs
+	public Wizard(Stage owner, WizardPageFactory... pageFactories) {
 		this.owner = owner;
-		pages = FXCollections.observableArrayList(nodes);
+		this.pageFactories = FXCollections.observableArrayList(pageFactories);
 		history = new Stack<>();
 		curPageIdx = UNDEFINED;
+
 		navTo(0);
 	}
 
@@ -44,7 +46,7 @@ public class Wizard extends StackPane {
 	}
 
 	public boolean hasNextPage() {
-		return (curPageIdx < pages.size() - 1);
+		return (curPageIdx < pageFactories.size() - 1);
 	}
 
 	public boolean hasPriorPage() {
@@ -52,14 +54,14 @@ public class Wizard extends StackPane {
 	}
 
 	public void navTo(int nextPageIdx, boolean pushHistory) {
-		if (nextPageIdx < 0 || nextPageIdx >= pages.size()) {
+		if (nextPageIdx < 0 || nextPageIdx >= pageFactories.size()) {
 			return;
 		}
 		if (curPageIdx != UNDEFINED && pushHistory) {
 			history.push(curPageIdx);
 		}
 
-		var nextPage = pages.get(nextPageIdx);
+		var nextPage = pageFactories.get(nextPageIdx).page();
 		curPageIdx = nextPageIdx;
 		getChildren().clear();
 		getChildren().add(nextPage);
@@ -71,14 +73,16 @@ public class Wizard extends StackPane {
 	}
 
 	public void navTo(String id) {
-		if (id == null) {
+		if (id == null || id.isBlank()) {
 			return;
 		}
 
-		pages.stream()
-			.filter(page -> id.equals(page.getId()))
-			.findFirst()
-			.ifPresent(page -> navTo(pages.indexOf(page)));
+		for (int i = 0; i < pageFactories.size(); ++i) {
+			if (id.equals(pageFactories.get(i).pageId())) {
+				navTo(i);
+				break;
+			}
+		}
 	}
 
 	public void finish() {

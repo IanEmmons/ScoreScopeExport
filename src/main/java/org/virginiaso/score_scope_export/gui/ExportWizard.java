@@ -4,7 +4,9 @@ import javafx.stage.Stage;
 
 public class ExportWizard extends Wizard {
 	public ExportWizard(Stage owner) {
-		super(owner, new LoginPage(), new TournamentPage());
+		super(owner,
+			new WizardPageFactory("Export tournament results to Duosmium", id -> new LoginPage(id)),
+			new WizardPageFactory("Which tournament?", id -> new TournamentPage(id)));
 	}
 
 	@Override

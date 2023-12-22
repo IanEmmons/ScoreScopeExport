@@ -1,14 +1,11 @@
 package org.virginiaso.score_scope_export.gui;
 
 import org.virginiaso.score_scope_export.KnackApp;
-import org.virginiaso.score_scope_export.PortalUserToken;
-import org.virginiaso.score_scope_export.TournamentRetrieverFactory;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
@@ -16,15 +13,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class LoginPage extends WizardPage {
-	public LoginPage() {
-		super("Export tournament results to Duosmium");
+	public LoginPage(String id) {
+		super(id);
 	}
 
 	@Override
@@ -43,27 +39,21 @@ public class LoginPage extends WizardPage {
 
 		grid.add(getAppSelectionPane(), 0, ++rowIndex, 2, 1);
 
-		Label userName = new Label("User Name:");
-		grid.add(userName, 0, ++rowIndex);
+		var userNameLbl = new Label("_User Name:");
+		userNameLbl.setMnemonicParsing(true);
+		var userNameBox = new TextField();
+		WizardData.inst.userName.bind(userNameBox.textProperty());
+		userNameLbl.setLabelFor(userNameLbl);
+		grid.add(userNameLbl, 0, ++rowIndex);
+		grid.add(userNameBox, 1, rowIndex);
 
-		var userTextField = new TextField();
-		grid.add(userTextField, 1, rowIndex);
-		WizardData.inst.userName.bind(userTextField.textProperty());
-
-		var pw = new Label("Password:");
-		grid.add(pw, 0, ++rowIndex);
-
+		var pwLbl = new Label("_Password:");
+		pwLbl.setMnemonicParsing(true);
 		var pwBox = new PasswordField();
-		grid.add(pwBox, 1, rowIndex);
 		WizardData.inst.password.bind(pwBox.textProperty());
-
-		var btn = new Button();
-		btn.setText("Sign In");
-		btn.setOnAction(event -> System.out.println("Hello World!"));
-		var btnHBox = new HBox(10);
-		btnHBox.setAlignment(Pos.BOTTOM_RIGHT);
-		btnHBox.getChildren().add(btn);
-		grid.add(btnHBox, 0, ++rowIndex, 2, 1);
+		pwLbl.setLabelFor(pwBox);
+		grid.add(pwLbl, 0, ++rowIndex);
+		grid.add(pwBox, 1, rowIndex);
 
 		return grid;
 	}
@@ -71,12 +61,13 @@ public class LoginPage extends WizardPage {
 	private static TilePane getAppSelectionPane() {
 		var appChoiceLabel = new Label("Choose the tournament scoring application:");
 
-		var rb1 = new RadioButton("ScoreScope");
+		var rb1 = new RadioButton("_ScoreScope");
+		rb1.setMnemonicParsing(true);
 		rb1.setUserData(KnackApp.SCORE_SCOPE);
-		//rb1.setSelected(true);
 
-		var rb2 = new RadioButton("VASO Division B/C Portal");
+		var rb2 = new RadioButton("_VASO Division B/C Portal");
 		rb2.setUserData(KnackApp.VASO_PORTAL);
+		rb2.setMnemonicParsing(true);
 
 		var knackAppGroup = new ToggleGroup();
 		rb1.setToggleGroup(knackAppGroup);
@@ -101,12 +92,33 @@ public class LoginPage extends WizardPage {
 	}
 
 	@Override
-	public void nextPage() {
-		PortalUserToken.inst().initialize(WizardData.inst.knackApp.getValue(),
-			WizardData.inst.userName.getValue(), WizardData.inst.password.getValue());
-		WizardData.inst.tournaments.setAll(
-			TournamentRetrieverFactory.create().retrieveReport());
+	public void manageButtons() {
+		super.manageButtons();
+		enableFinishButton(false);
+	}
 
-		super.nextPage();
+	@Override
+	public void nextPage() {
+		try {
+			var knackApp = WizardData.inst.knackApp.getValue();
+			var userName = WizardData.inst.userName.getValue();
+			var password = WizardData.inst.password.getValue();
+			if (knackApp == null) {
+				Alerts.show("Missing input",
+					"You must choose an application, either ScoreScope or the VASO Portal.");
+			} else if (userName == null || userName.isBlank()) {
+				Alerts.show("Missing input", "You must provide a user name (usually an email address).");
+			} else if (password == null || password.isBlank()) {
+				Alerts.show("Missing input", "You must provide a password.");
+			} else {
+				var task = new KnackTask(knackApp, userName, password);
+				var progress = Alerts.newProgressAlert(task);
+				ExportApplication.exec.execute(task);
+				progress.showAndWait();
+				super.nextPage();
+			}
+		} catch (RuntimeException ex) {
+			Alerts.showNestedException(ex);
+		}
 	}
 }

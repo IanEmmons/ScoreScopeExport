@@ -19,6 +19,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbookType;
+import org.virginiaso.score_scope_export.exception.CmdLineException;
 
 public class App {
 	private static final String SUB_TITLE_TEXT

@@ -8,6 +8,8 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.stream.Collectors;
 
+import org.virginiaso.score_scope_export.exception.KnackException;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -64,16 +66,22 @@ public class PortalUserToken {
 				.get("user").getAsJsonObject()
 				.get("token").getAsString();
 		} else {
+			System.out.format("Error -- Response Body: '%1$s'%n", jsonResponseBody);
 			JsonArray errors = response.get("errors").getAsJsonArray();
 			var errorMessages = Util.asStream(errors)
-				.map(JsonElement::getAsJsonObject)
-				.map(error -> error.get("message"))
-				.map(JsonElement::getAsString)
-				.collect(Collectors.joining(
-					"%n".formatted(),
-					"Unable to retrieve Portal API token: ",
-					""));
-			throw new IllegalStateException(errorMessages);
+				.map(PortalUserToken::errorAsString)
+				.collect(Collectors.joining(System.lineSeparator()));
+			throw new KnackException(errorMessages);
+		}
+	}
+
+	private static String errorAsString(JsonElement error) {
+		if (error.isJsonPrimitive()) {
+			return error.getAsString();
+		} else if (error.isJsonObject()) {
+			return error.getAsJsonObject().get("message").getAsString();
+		} else {
+			throw new IllegalStateException("Unknown JSON parser error format");
 		}
 	}
 

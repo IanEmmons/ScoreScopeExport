@@ -25,9 +25,7 @@ java {
 
 application {
 	//mainClass.set("org.virginiaso.score_scope_export.App")
-	//mainClass.set("org.virginiaso.score_scope_export.gui.GuiApp")
 	mainClass.set("org.virginiaso.score_scope_export.gui.ExportApplication")
-	//mainClass.set("org.virginiaso.score_scope_export.gui.Survey")
 }
 
 javafx {

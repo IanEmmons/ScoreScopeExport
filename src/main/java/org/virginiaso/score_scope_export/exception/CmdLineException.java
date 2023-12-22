@@ -1,4 +1,4 @@
-package org.virginiaso.score_scope_export;
+package org.virginiaso.score_scope_export.exception;
 
 public class CmdLineException extends Exception {
 	private static final long serialVersionUID = 1L;
