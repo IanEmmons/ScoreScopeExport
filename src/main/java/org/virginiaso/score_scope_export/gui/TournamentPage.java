@@ -17,6 +17,7 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 
 public class TournamentPage extends WizardPage {
 	public TournamentPage(String id) {
@@ -64,9 +65,6 @@ public class TournamentPage extends WizardPage {
 			var userData = (Pair<String, String>) newValue.getUserData();
 			WizardData.inst.selectedTournament.setValue(userData.getLeft());
 			WizardData.inst.selectedDivision.setValue(userData.getRight());
-			System.out.format("Selected %1$s, div. %2$s%n",
-				WizardData.inst.selectedTournament.get(),
-				WizardData.inst.selectedDivision.get());
 		});
 
 		tourneys.forEach(
@@ -84,5 +82,30 @@ public class TournamentPage extends WizardPage {
 		rb.setUserData(Pair.of(name, division));
 		rb.setToggleGroup(group);
 		pane.getChildren().add(rb);
+	}
+
+	@Override
+	public void manageButtons() {
+		super.manageButtons();
+		enableFinishButton(false);
+	}
+
+	@Override
+	public void nextPage() {
+		var fileChooser = new FileChooser();
+		fileChooser.setTitle("Choose Duosmium export file");
+		fileChooser.setInitialFileName("duosmium-upload.xlsx");
+		fileChooser.getExtensionFilters().addAll(
+			new FileChooser.ExtensionFilter("Excel Workbook (.xlsx)", "*.xlsx"),
+			new FileChooser.ExtensionFilter("All Files", "*.*"));
+		var outputFile = fileChooser.showSaveDialog(this.getScene().getWindow());
+
+		var task = new ExportWriterTask(outputFile);
+		var progress = Alerts.newProgressAlert(this, task);
+		ExportApplication.EXEC.execute(task);
+		progress.showAndWait();
+		if (task.hasSucceeded()) {
+			super.nextPage();
+		}
 	}
 }

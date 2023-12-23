@@ -99,26 +99,24 @@ public class LoginPage extends WizardPage {
 
 	@Override
 	public void nextPage() {
-		try {
-			var knackApp = WizardData.inst.knackApp.getValue();
-			var userName = WizardData.inst.userName.getValue();
-			var password = WizardData.inst.password.getValue();
-			if (knackApp == null) {
-				Alerts.show("Missing input",
-					"You must choose an application, either ScoreScope or the VASO Portal.");
-			} else if (userName == null || userName.isBlank()) {
-				Alerts.show("Missing input", "You must provide a user name (usually an email address).");
-			} else if (password == null || password.isBlank()) {
-				Alerts.show("Missing input", "You must provide a password.");
-			} else {
-				var task = new KnackTask(knackApp, userName, password);
-				var progress = Alerts.newProgressAlert(task);
-				ExportApplication.exec.execute(task);
-				progress.showAndWait();
+		var knackApp = WizardData.inst.knackApp.getValue();
+		var userName = WizardData.inst.userName.getValue();
+		var password = WizardData.inst.password.getValue();
+		if (knackApp == null) {
+			Alerts.show("Missing input",
+				"You must choose an application, either ScoreScope or the VASO Portal.");
+		} else if (userName == null || userName.isBlank()) {
+			Alerts.show("Missing input", "You must provide a user name (usually an email address).");
+		} else if (password == null || password.isBlank()) {
+			Alerts.show("Missing input", "You must provide a password.");
+		} else {
+			var task = new KnackTask(knackApp, userName, password);
+			var progress = Alerts.newProgressAlert(this, task);
+			ExportApplication.EXEC.execute(task);
+			progress.showAndWait();
+			if (task.hasSucceeded()) {
 				super.nextPage();
 			}
-		} catch (RuntimeException ex) {
-			Alerts.showNestedException(ex);
 		}
 	}
 }

@@ -55,7 +55,7 @@ public class PortalUserToken {
 				.thenAccept(this::interpretResponse)
 				.join();
 		}
-		System.out.format("Found user token '%1$s'%n", userToken);
+		//System.out.format("Found user token '%1$s'%n", userToken);
 	}
 
 	private void interpretResponse(String jsonResponseBody) {
