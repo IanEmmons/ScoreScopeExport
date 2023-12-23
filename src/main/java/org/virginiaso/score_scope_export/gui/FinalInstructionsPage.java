@@ -43,7 +43,7 @@ public class FinalInstructionsPage extends WizardPage {
 
 			* Preview the input template, correct issues, and submit.
 
-			""".formatted(WizardData.inst.knackApp.getValue().title()));
+			""".formatted(WizardData.inst().knackApp.getValue().title()));
 		grid.add(instructions, 0, ++rowIndex, 1, 1);
 
 		return grid;

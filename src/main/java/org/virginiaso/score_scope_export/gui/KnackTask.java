@@ -33,15 +33,15 @@ public class KnackTask extends Task<Void> {
 			PortalUserToken.inst().initialize(knackApp, userName, password);
 
 			updateMessage("Fetching the list of tournaments...");
-			WizardData.inst.replaceTournaments(
+			WizardData.inst().replaceTournaments(
 				TournamentRetrieverFactory.create(knackApp).retrieveReport());
 
 			updateMessage("Fetching the list of teams...");
-			WizardData.inst.replaceTeamResults(
+			WizardData.inst().replaceTeamResults(
 				TeamResultsRetrieverFactory.create(knackApp).retrieveReport());
 
 			updateMessage("Fetching team ranks in each event...");
-			WizardData.inst.replaceRanks(
+			WizardData.inst().replaceRanks(
 				TeamRankByEventRetrieverFactory.create(knackApp).retrieveReport());
 
 			updateMessage("Data retrieval complete.");

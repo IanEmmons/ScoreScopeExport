@@ -17,7 +17,20 @@ import javafx.beans.property.StringProperty;
  * Holder for the data entered by the user.
  */
 public class WizardData {
-	public static final WizardData inst = new WizardData();
+	private static class WizardDataHolder {
+		private static final WizardData INSTANCE = new WizardData();
+	}
+
+	/**
+	 * Get the singleton instance of WizardData. This follows the "lazy
+	 * initialization holder class" idiom for lazy initialization of a static field.
+	 * See Item 83 of Effective Java, Third Edition, by Joshua Bloch for details.
+	 *
+	 * @return the instance
+	 */
+	public static WizardData inst() {
+		return WizardDataHolder.INSTANCE;
+	}
 
 	public final Property<KnackApp> knackApp = new SimpleObjectProperty<>();
 	public final StringProperty userName = new SimpleStringProperty();

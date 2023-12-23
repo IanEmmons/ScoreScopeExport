@@ -42,7 +42,7 @@ public class LoginPage extends WizardPage {
 		var userNameLbl = new Label("_User Name:");
 		userNameLbl.setMnemonicParsing(true);
 		var userNameBox = new TextField();
-		WizardData.inst.userName.bind(userNameBox.textProperty());
+		WizardData.inst().userName.bind(userNameBox.textProperty());
 		userNameLbl.setLabelFor(userNameLbl);
 		grid.add(userNameLbl, 0, ++rowIndex);
 		grid.add(userNameBox, 1, rowIndex);
@@ -50,7 +50,7 @@ public class LoginPage extends WizardPage {
 		var pwLbl = new Label("_Password:");
 		pwLbl.setMnemonicParsing(true);
 		var pwBox = new PasswordField();
-		WizardData.inst.password.bind(pwBox.textProperty());
+		WizardData.inst().password.bind(pwBox.textProperty());
 		pwLbl.setLabelFor(pwBox);
 		grid.add(pwLbl, 0, ++rowIndex);
 		grid.add(pwBox, 1, rowIndex);
@@ -73,7 +73,7 @@ public class LoginPage extends WizardPage {
 		rb1.setToggleGroup(knackAppGroup);
 		rb2.setToggleGroup(knackAppGroup);
 		knackAppGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-			WizardData.inst.knackApp.setValue((KnackApp) newValue.getUserData());
+			WizardData.inst().knackApp.setValue((KnackApp) newValue.getUserData());
 		});
 
 		var knackAppPane = new TilePane();
@@ -99,9 +99,9 @@ public class LoginPage extends WizardPage {
 
 	@Override
 	public void nextPage() {
-		var knackApp = WizardData.inst.knackApp.getValue();
-		var userName = WizardData.inst.userName.getValue();
-		var password = WizardData.inst.password.getValue();
+		var knackApp = WizardData.inst().knackApp.getValue();
+		var userName = WizardData.inst().userName.getValue();
+		var password = WizardData.inst().password.getValue();
 		if (knackApp == null) {
 			Alerts.show("Missing input",
 				"You must choose an application, either ScoreScope or the VASO Portal.");

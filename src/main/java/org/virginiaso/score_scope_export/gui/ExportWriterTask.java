@@ -23,14 +23,14 @@ public class ExportWriterTask extends Task<Void> {
 	protected Void call() {
 		try {
 			updateMessage("Exporting %1$s, Division %2$s to Duosmium...".formatted(
-				WizardData.inst.selectedTournament.get(),
-				WizardData.inst.selectedDivision.get()));
+				WizardData.inst().selectedTournament.get(),
+				WizardData.inst().selectedDivision.get()));
 
 			var exportWriter = new ExportWriter(outputFile,
-				WizardData.inst.selectedTournament.get(),
-				WizardData.inst.selectedDivision.get());
-			exportWriter.writeExport(WizardData.inst.tournaments,
-				WizardData.inst.teamResults, WizardData.inst.teamRanksByEvent);
+				WizardData.inst().selectedTournament.get(),
+				WizardData.inst().selectedDivision.get());
+			exportWriter.writeExport(WizardData.inst().tournaments,
+				WizardData.inst().teamResults, WizardData.inst().teamRanksByEvent);
 
 			updateMessage("Duosmium export complete.");
 		} catch (IOException | RuntimeException ex) {

@@ -26,13 +26,13 @@ public class TournamentPage extends WizardPage {
 
 	@Override
 	protected Parent getContent() {
-		var divisions = WizardData.inst.teamResults.stream()
+		var divisions = WizardData.inst().teamResults.stream()
 			.map(TeamResults::division)
 			.distinct()
 			.sorted()
 			.toList();
 
-		var tourneys = WizardData.inst.tournaments.stream()
+		var tourneys = WizardData.inst().tournaments.stream()
 			.map(Tournament::name)
 			.toList();
 
@@ -63,8 +63,8 @@ public class TournamentPage extends WizardPage {
 		toggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
 			@SuppressWarnings("unchecked")
 			var userData = (Pair<String, String>) newValue.getUserData();
-			WizardData.inst.selectedTournament.setValue(userData.getLeft());
-			WizardData.inst.selectedDivision.setValue(userData.getRight());
+			WizardData.inst().selectedTournament.setValue(userData.getLeft());
+			WizardData.inst().selectedDivision.setValue(userData.getRight());
 		});
 
 		tourneys.forEach(
