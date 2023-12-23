@@ -34,15 +34,15 @@ public class KnackTask extends Task<Void> {
 
 			updateMessage("Fetching the list of tournaments...");
 			WizardData.inst.replaceTournaments(
-				TournamentRetrieverFactory.create().retrieveReport());
+				TournamentRetrieverFactory.create(knackApp).retrieveReport());
 
 			updateMessage("Fetching the list of teams...");
 			WizardData.inst.replaceTeamResults(
-				TeamResultsRetrieverFactory.create().retrieveReport());
+				TeamResultsRetrieverFactory.create(knackApp).retrieveReport());
 
 			updateMessage("Fetching team ranks in each event...");
 			WizardData.inst.replaceRanks(
-				TeamRankByEventRetrieverFactory.create().retrieveReport());
+				TeamRankByEventRetrieverFactory.create(knackApp).retrieveReport());
 
 			updateMessage("Data retrieval complete.");
 		} catch (RuntimeException ex) {

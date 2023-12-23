@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.virginiaso.score_scope_export.exception.KnackException;
+import org.virginiaso.score_scope_export.KnackException;
 
 import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;

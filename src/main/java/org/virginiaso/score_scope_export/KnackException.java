@@ -1,4 +1,4 @@
-package org.virginiaso.score_scope_export.exception;
+package org.virginiaso.score_scope_export;
 
 public class KnackException extends RuntimeException {
 	private static final long serialVersionUID = 1L;

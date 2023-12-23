@@ -24,7 +24,6 @@ java {
 }
 
 application {
-	//mainClass.set("org.virginiaso.score_scope_export.App")
 	mainClass.set("org.virginiaso.score_scope_export.gui.ExportApplication")
 }
 
@@ -39,17 +38,4 @@ testing {
 			useJUnitJupiter("5.9.3")
 		}
 	}
-}
-
-task<JavaExec>("createDuosmiumUpload") {
-	dependsOn("classes")
-	mainClass = "org.virginiaso.score_scope_export.App"
-	classpath = java.sourceSets["main"].runtimeClasspath
-}
-
-task<JavaExec>("getPortalData") {
-	dependsOn("classes")
-	mainClass = "org.virginiaso.score_scope_export.PortalRetriever"
-	classpath = java.sourceSets["main"].runtimeClasspath
-	systemProperty("knack.password", "${project.properties["knackPassword"]}")
 }

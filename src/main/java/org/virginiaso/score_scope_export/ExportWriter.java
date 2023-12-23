@@ -85,8 +85,8 @@ public class ExportWriter {
 		addOverviewRow(sheet, ++rowNum, "1I. Start Date", "");
 		addOverviewRow(sheet, ++rowNum, "1J. End Date", "");
 		addOverviewRow(sheet, ++rowNum, "1K. Awards Date", tournament.formattedDate());
-		addOverviewRow(sheet, ++rowNum, "1L. Medals", Integer.toString(tournament.numMedalsPerEvent()));
-		addOverviewRow(sheet, ++rowNum, "1M. Trophies", Integer.toString(tournament.numTrophies()));
+		addOverviewRow(sheet, ++rowNum, "1L. Medals", Integer.toString(tournament.numMedalsPerEvent(division)));
+		addOverviewRow(sheet, ++rowNum, "1M. Trophies", Integer.toString(tournament.numTrophies(division)));
 		addOverviewRow(sheet, ++rowNum, "1N. Bids", "0");
 		addOverviewRow(sheet, ++rowNum, "1O. N-Offset", "0");
 		addOverviewRow(sheet, ++rowNum, "1P. Drops", "0");

@@ -1,36 +1,20 @@
 package org.virginiaso.score_scope_export;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.UncheckedIOException;
-import java.io.Writer;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
-import java.nio.file.FileVisitOption;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import com.google.gson.Gson;
-import com.google.gson.stream.JsonWriter;
 
 public class PortalRetriever<Item> {
 	public static class ReportResponse<Item> {
@@ -61,63 +45,23 @@ public class PortalRetriever<Item> {
 	// From the config and factory:
 	private final Type reportResponseType;
 	private final Gson gson;
+	private final KnackApp knackApp;
 	private final KnackView knackView;
-	private final File reportDir;
-	private final String fileNameFormat;
-	private final Pattern fileNamePattern;
 
 	// Computed here:
 	private int totalPages;
 	private int lastPageRead;	// 1-based
 	private List<Item> reportItems;
 
-	public PortalRetriever(Gson gson, KnackView knackView, Type reportResponseType) {
+	public PortalRetriever(Gson gson, KnackApp knackApp, KnackView knackView, Type reportResponseType) {
 		this.reportResponseType = reportResponseType;
 		this.gson = gson;
+		this.knackApp = knackApp;
 		this.knackView = knackView;
-		reportDir = Config.inst().getDownloadDir();
-		fileNameFormat = knackView.toString() + "-%1$tFT%1$tT.json";
-		fileNamePattern = Pattern.compile(knackView.toString() + "-.*\\.json");
 
 		totalPages = -1;
 		lastPageRead = -1;
 		reportItems = new ArrayList<>();
-	}
-
-	private static class StringHolder {
-		public String string = null;
-	}
-	public void saveRawReport() throws IOException {
-		var httpRequest = getHttpRequest(1);
-		var stringHolder = new StringHolder();
-		try (var httpClient = HttpClient.newHttpClient()) {
-			httpClient
-				.sendAsync(httpRequest, BodyHandlers.ofString())
-				.thenApply(HttpResponse::body)
-				.thenAccept(body -> stringHolder.string = body)
-				.join();
-
-			var fileName = "raw-portal-%1$s-report-body.json".formatted(knackView);
-			try (var pw = new PrintWriter(fileName, Util.CHARSET)) {
-				pw.print(stringHolder.string);
-			}
-		}
-	}
-
-	public void saveReport() throws IOException {
-		retrieveReport();
-		var reportFile = new File(reportDir, fileNameFormat.formatted(LocalDateTime.now()));
-		if (!reportDir.exists()) {
-			reportDir.mkdirs();
-		}
-		try (
-			OutputStream os = new FileOutputStream(reportFile);
-			Writer wtr = new OutputStreamWriter(os, Util.CHARSET);
-			JsonWriter jwtr = new JsonWriter(wtr);
-		) {
-			jwtr.setIndent("\t");
-			gson.toJson(new ReportResponse<>(reportItems), reportResponseType, jwtr);
-		}
 	}
 
 	public List<Item> retrieveReport() {
@@ -138,42 +82,15 @@ public class PortalRetriever<Item> {
 	}
 
 	private HttpRequest getHttpRequest(int currentPage) {
-		var url = REPORT_URL.formatted(Config.inst().getKnackUrlPath(knackView),
+		var url = REPORT_URL.formatted(Config.inst().getKnackUrlPath(knackApp, knackView),
 			currentPage, PAGE_SIZE);
 		return HttpRequest.newBuilder(URI.create(url))
 			.GET()
 			.header("Accept", Util.JSON_MEDIA_TYPE)
-			.header("X-Knack-Application-Id", Config.inst().getKnackAppId())
+			.header("X-Knack-Application-Id", Config.inst().getKnackAppId(knackApp))
 			.header("X-Knack-REST-API-KEY", "knack")
 			.header("Authorization", PortalUserToken.inst().getUserToken())
 			.build();
-	}
-
-	public List<Item> readLatestReportFile() throws IOException {
-		Stopwatch timer = new Stopwatch();
-		File reportFile;
-		try (Stream<Path> stream = Files.find(reportDir.toPath(), Integer.MAX_VALUE,
-			this::matcher, FileVisitOption.FOLLOW_LINKS)) {
-			reportFile = stream
-				.map(Path::toFile)
-				.max(Comparator.comparing(File::getName))
-				.orElse(null);
-		}
-
-		if (reportFile == null) {
-			return List.of();
-		}
-
-		try (InputStream is = new FileInputStream(reportFile)) {
-			List<Item> items = readJsonReport(is, (PortalRetriever<Item>) null);
-			timer.stopAndReport("Parsed Knack %1$s file".formatted(knackView));
-			return items;
-		}
-	}
-
-	private boolean matcher(Path path, BasicFileAttributes attrs) {
-		var fName = path.getFileName().toString();
-		return attrs.isRegularFile() && fileNamePattern.matcher(fName).matches();
 	}
 
 	private List<Item> readJsonReport(InputStream is, PortalRetriever<Item> retriever) {
@@ -186,35 +103,6 @@ public class PortalRetriever<Item> {
 			return response.records;
 		} catch (IOException ex) {
 			throw new UncheckedIOException(ex);
-		}
-	}
-
-	public static void main(String [] args) {
-		try {
-			PortalRetriever<Tournament> tourneyRetriever = TournamentRetrieverFactory.create();
-			PortalRetriever<TeamRankByEvent> ranksRetriever = TeamRankByEventRetrieverFactory.create();
-			PortalRetriever<TeamResults> teamResultsRetriever = TeamResultsRetrieverFactory.create();
-
-			//tourneyRetriever.saveRawReport();
-			//ranksRetriever.saveRawReport();
-			//teamResultsRetriever.saveRawReport();
-
-			tourneyRetriever.saveReport();
-			List<Tournament> tournaments = tourneyRetriever.readLatestReportFile();
-			System.out.format("Found %1$d tournaments:%n", tournaments.size());
-			//tournaments.forEach(tournament -> System.out.format("   %1$s%n", tournament));
-
-			ranksRetriever.saveReport();
-			List<TeamRankByEvent> teamRanksByEvent = ranksRetriever.readLatestReportFile();
-			System.out.format("Found %1$d team ranks by event:%n", teamRanksByEvent.size());
-			//teamRanksByEvent.forEach(teamRankByEvent -> System.out.format("   %1$s%n", teamRankByEvent));
-
-			teamResultsRetriever.saveReport();
-			List<TeamResults> teamResults = teamResultsRetriever.readLatestReportFile();
-			System.out.format("Found %1$d team results:%n", teamResults.size());
-			//teamResults.forEach(teamResult -> System.out.format("   %1$s%n", teamResult));
-		} catch (IOException ex) {
-			ex.printStackTrace();
 		}
 	}
 }

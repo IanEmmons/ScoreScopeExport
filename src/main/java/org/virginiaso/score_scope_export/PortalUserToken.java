@@ -8,8 +8,6 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.stream.Collectors;
 
-import org.virginiaso.score_scope_export.exception.KnackException;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
