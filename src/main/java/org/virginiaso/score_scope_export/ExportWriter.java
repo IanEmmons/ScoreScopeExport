@@ -11,6 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -74,8 +75,8 @@ public class ExportWriter {
 		sheet.setZoom(DEFAULT_ZOOM);
 		var rowNum = 1;
 
-		addOverviewRow(sheet, ++rowNum, "1A. Name", tournamentName);
-		addOverviewRow(sheet, ++rowNum, "1B. Short Name", tournamentName);
+		addOverviewRow(sheet, ++rowNum, "1A. Name", tournamentNameForDuosmium(tournamentName));
+		addOverviewRow(sheet, ++rowNum, "1B. Short Name", "");
 		addOverviewRow(sheet, ++rowNum, "1C. Location", "");
 		addOverviewRow(sheet, ++rowNum, "1D. State", "");
 		addOverviewRow(sheet, ++rowNum, "1E. Level", "");
@@ -87,7 +88,7 @@ public class ExportWriter {
 		addOverviewRow(sheet, ++rowNum, "1K. Awards Date", tournament.formattedDate());
 		addOverviewRow(sheet, ++rowNum, "1L. Medals", Integer.toString(tournament.numMedalsPerEvent(division)));
 		addOverviewRow(sheet, ++rowNum, "1M. Trophies", Integer.toString(tournament.numTrophies(division)));
-		addOverviewRow(sheet, ++rowNum, "1N. Bids", "0");
+		addOverviewRow(sheet, ++rowNum, "1N. Bids", "");
 		addOverviewRow(sheet, ++rowNum, "1O. N-Offset", "0");
 		addOverviewRow(sheet, ++rowNum, "1P. Drops", "0");
 		addOverviewRow(sheet, ++rowNum, "1Q. Source", "");
@@ -95,6 +96,10 @@ public class ExportWriter {
 		autoSizeColumns(sheet);
 		addTitleRow(sheet, 0, Style.TITLE, "Tournament Information");
 		addTitleRow(sheet, 1, Style.SUB_TITLE, SUB_TITLE_TEXT);
+	}
+
+	private static String tournamentNameForDuosmium(String name) {
+		return Pattern.compile(" *20[0-9][0-9] *").matcher(name).replaceAll(" ").strip();
 	}
 
 	private void addOverviewRow(Sheet sheet, int rowNum, String label, String value) {
@@ -111,8 +116,11 @@ public class ExportWriter {
 	}
 
 	private void createEventSheet(List<TeamRankByEvent> ranks) {
-		Map<String, Boolean> eventMap = new LinkedHashMap<>();
-		ranks.forEach(rByE -> eventMap.put(rByE.event(), rByE.isTrialEvent()));
+		Map<String, Boolean> eventMap = ranks.stream().collect(Collectors.toMap(
+			TeamRankByEvent::eventForDuosmium,	// key mapper
+			TeamRankByEvent::isTrialEvent,		// value mapper
+			(v1, v2) -> v1,							// merge function - shouldn't be invoked
+			LinkedHashMap::new));					// map factory
 
 		var sheet = workbook.createSheet("2. Events");
 		sheet.setZoom(DEFAULT_ZOOM);
@@ -150,8 +158,8 @@ public class ExportWriter {
 		for (var teamResult : teamResults) {
 			List<String> entries = new ArrayList<>();
 			entries.add(teamResult.bareTeamNum());
-			entries.add(teamResult.schoolName());
-			entries.add(teamResult.schoolName());
+			entries.add(teamResult.schoolNameForDuosmium());
+			entries.add(teamResult.schoolAbbrevForDuosmium());
 			entries.add(teamResult.teamName());
 			entries.add(teamResult.city());
 			entries.add(teamResult.state());

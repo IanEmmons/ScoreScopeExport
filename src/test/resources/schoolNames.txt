@@ -1,0 +1,20 @@
+input|expected|abbrevName
+BASIS Independent McLean|BASIS Independent McLean|BASIS McLean
+BASIS Washington, D.C.|BASIS Independent Washington, D.C.|BASIS DC
+Belmont Ridge MS|Belmont Ridge Middle School|
+Brambleton MS|Brambleton Middle School|
+Churchill Road ES|Churchill Road Elementary School|
+Cooper MS|Cooper Middle School|
+Dominion Christian School|Dominion Christian School|
+Forestville ES|Forestville Elementary School|
+Frost MS|Robert Frost Middle School|Frost MS
+Glasgow MS|Glasgow Middle School|
+Great Falls ES|Great Falls Elementary School|
+Haycock ES|Haycock Elementary School|
+Lake Braddock SS|Lake Braddock Secondary School|
+Longfellow MS|Longfellow Middle School|
+Louise Archer ES|Louise Archer Elementary School|
+Luther Jackson MS|Luther Jackson Middle School|
+Nysmith School|Nysmith School for the Gifted|Nysmith School
+Rachel Carson MS|Rachel Carson Middle School|
+River Bend MS|River Bend Middle School|

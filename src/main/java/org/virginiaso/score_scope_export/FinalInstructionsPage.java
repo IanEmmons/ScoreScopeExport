@@ -12,6 +12,20 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class FinalInstructionsPage extends WizardPage {
+	private static final String INSTRUCTIONS = """
+		How to submit your %1$s export to Duosmium:
+
+		* Visit Duosmium and make a copy of their input template.
+
+		* Open the export file in Excel.
+
+		* Paste (values only) the orange-yellow sections of the export file
+		  into the corresponding pages of the template.
+
+		* Preview the input template, correct issues, and submit.
+
+		""";
+
 	public FinalInstructionsPage(String id) {
 		super(id);
 	}
@@ -39,19 +53,8 @@ public class FinalInstructionsPage extends WizardPage {
 		var instructions = new TextArea();
 		instructions.setFont(Font.font("Tahoma", FontWeight.NORMAL, 12));
 		instructions.setWrapText(true);
-		instructions.setText("""
-			How to submit your %1$s export to Duosmium:
-
-			* Visit Duosmium and make a copy of their input template.
-
-			* Open the export file in Excel.
-
-			* Paste (values only) the orange-yellow sections of the export file
-			  into the corresponding pages of the template.
-
-			* Preview the input template, correct issues, and submit.
-
-			""".formatted(WizardData.inst().knackApp.getValue().title()));
+		instructions.setText(INSTRUCTIONS.formatted(
+			WizardData.inst().knackApp.getValue().title()));
 		grid.add(instructions, 0, ++rowIndex, 2, 1);
 
 		return grid;

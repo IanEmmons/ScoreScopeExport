@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import java.util.List;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.Spliterator;
@@ -16,6 +17,8 @@ import java.util.Spliterators;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.gson.JsonElement;
 
@@ -30,6 +33,16 @@ public class Util {
 		return (str == null)
 			? null
 			: WHITESPACE.matcher(str.strip()).replaceAll(" ");
+	}
+
+	public static String applyTranslations(String input, List<Pair<Pattern, String>> translations) {
+		var translated = input;
+		for (var translation : translations) {
+			var pattern = translation.getLeft();
+			var replacement = translation.getRight();
+			translated = pattern.matcher(translated).replaceAll(replacement);
+		}
+		return translated;
 	}
 
 	public static BigDecimal getAsBigDecimal(JsonElement element) {

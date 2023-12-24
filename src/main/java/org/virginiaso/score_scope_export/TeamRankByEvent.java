@@ -1,8 +1,11 @@
 package org.virginiaso.score_scope_export;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.tuple.Pair;
 
 public record TeamRankByEvent(
 		String rawScoreId,
@@ -15,6 +18,15 @@ public record TeamRankByEvent(
 		String teamNum,			// Teams > Team #
 		String rank)				// Duosmium rank
 	implements Comparable<TeamRankByEvent> {
+
+	private static final List<Pair<Pattern, String>> EVENT_TRANSLATIONS = List.of(
+		Pair.of(Pattern.compile(" +[BC]$"), ""),
+		Pair.of(Pattern.compile("^Anatomy \\& Physiology$"), "Anatomy and Physiology")
+		);
+
+	public String eventForDuosmium() {
+		return Util.applyTranslations(event(), EVENT_TRANSLATIONS);
+	}
 
 	@Override
 	public int hashCode() {
