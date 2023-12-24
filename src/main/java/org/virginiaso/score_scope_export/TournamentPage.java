@@ -1,8 +1,6 @@
-package org.virginiaso.score_scope_export.gui;
+package org.virginiaso.score_scope_export;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.virginiaso.score_scope_export.TeamResults;
-import org.virginiaso.score_scope_export.Tournament;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -92,20 +90,26 @@ public class TournamentPage extends WizardPage {
 
 	@Override
 	public void nextPage() {
-		var fileChooser = new FileChooser();
-		fileChooser.setTitle("Choose Duosmium export file");
-		fileChooser.setInitialFileName("duosmium-upload.xlsx");
-		fileChooser.getExtensionFilters().addAll(
-			new FileChooser.ExtensionFilter("Excel Workbook (.xlsx)", "*.xlsx"),
-			new FileChooser.ExtensionFilter("All Files", "*.*"));
-		var outputFile = fileChooser.showSaveDialog(this.getScene().getWindow());
+		var selectedTournament = WizardData.inst().selectedTournament.get();
+		var selectedDivision = WizardData.inst().selectedDivision.get();
+		if (selectedTournament == null || selectedDivision == null) {
+			Alerts.show("Missing input", "You must choose a tournament from the list.");
+		} else {
+			var fileChooser = new FileChooser();
+			fileChooser.setTitle("Choose Duosmium export file");
+			fileChooser.setInitialFileName("duosmium-upload.xlsx");
+			fileChooser.getExtensionFilters().addAll(
+				new FileChooser.ExtensionFilter("Excel Workbook (.xlsx)", "*.xlsx"),
+				new FileChooser.ExtensionFilter("All Files", "*.*"));
+			var outputFile = fileChooser.showSaveDialog(this.getScene().getWindow());
 
-		var task = new ExportWriterTask(outputFile);
-		var progress = Alerts.newProgressAlert(this, task);
-		ExportApplication.EXEC.execute(task);
-		progress.showAndWait();
-		if (task.hasSucceeded()) {
-			super.nextPage();
+			var task = new ExportWriterTask(outputFile);
+			var progress = Alerts.newProgressAlert(this, task);
+			ExportApplication.EXEC.execute(task);
+			progress.showAndWait();
+			if (task.hasSucceeded()) {
+				super.nextPage();
+			}
 		}
 	}
 }

@@ -1,12 +1,7 @@
-package org.virginiaso.score_scope_export.gui;
+package org.virginiaso.score_scope_export;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.virginiaso.score_scope_export.KnackApp;
-import org.virginiaso.score_scope_export.TeamRankByEvent;
-import org.virginiaso.score_scope_export.TeamResults;
-import org.virginiaso.score_scope_export.Tournament;
 
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;

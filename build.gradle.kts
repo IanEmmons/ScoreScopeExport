@@ -29,7 +29,7 @@ java {
 }
 
 tasks.jar {
-	manifest.attributes["Main-Class"] = "org.virginiaso.score_scope_export.gui.Launcher"
+	manifest.attributes["Main-Class"] = "org.virginiaso.score_scope_export.Launcher"
 	from(configurations
 		.runtimeClasspath
 		.get()
@@ -43,7 +43,7 @@ javafx {
 }
 
 application {
-	mainClass.set("org.virginiaso.score_scope_export.gui.ExportApplication")
+	mainClass.set("org.virginiaso.score_scope_export.ExportApplication")
 }
 
 testing {

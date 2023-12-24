@@ -1,4 +1,4 @@
-package org.virginiaso.score_scope_export.gui;
+package org.virginiaso.score_scope_export;
 
 public class Launcher {
 	public static void main(String[] args) {

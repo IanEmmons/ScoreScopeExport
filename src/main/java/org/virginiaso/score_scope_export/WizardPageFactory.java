@@ -1,4 +1,4 @@
-package org.virginiaso.score_scope_export.gui;
+package org.virginiaso.score_scope_export;
 
 import java.util.Objects;
 import java.util.function.Function;

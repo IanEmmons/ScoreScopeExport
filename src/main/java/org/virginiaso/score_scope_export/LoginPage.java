@@ -1,6 +1,4 @@
-package org.virginiaso.score_scope_export.gui;
-
-import org.virginiaso.score_scope_export.KnackApp;
+package org.virginiaso.score_scope_export;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;

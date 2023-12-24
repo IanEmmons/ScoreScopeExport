@@ -1,4 +1,4 @@
-package org.virginiaso.score_scope_export.gui;
+package org.virginiaso.score_scope_export;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -8,15 +8,17 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.virginiaso.score_scope_export.KnackException;
 
 import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
+import javafx.geometry.Orientation;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.Separator;
+import javafx.scene.layout.HBox;
 
 public class Alerts {
 	private static final boolean SHOW_FULL_EXCEPTION_OUTPUT = true;
@@ -53,7 +55,15 @@ public class Alerts {
 
 		var progressIndicator = new ProgressIndicator();
 		progressIndicator.progressProperty().bind(task.progressProperty());
-		alert.setGraphic(progressIndicator);
+
+		var separator = new Separator();
+		separator.setOrientation(Orientation.VERTICAL);
+
+		var hbox = new HBox();
+		hbox.setSpacing(5);
+		hbox.getChildren().addAll(progressIndicator, separator);
+
+		alert.setGraphic(hbox);
 
 		alert.getDialogPane().getButtonTypes().add(ButtonType.OK);
 		alert.getDialogPane().lookupButton(ButtonType.OK)

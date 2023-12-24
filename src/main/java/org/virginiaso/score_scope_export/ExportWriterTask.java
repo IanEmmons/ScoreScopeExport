@@ -1,11 +1,10 @@
-package org.virginiaso.score_scope_export.gui;
+package org.virginiaso.score_scope_export;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.virginiaso.score_scope_export.ExportWriter;
 
 import javafx.concurrent.Task;
 

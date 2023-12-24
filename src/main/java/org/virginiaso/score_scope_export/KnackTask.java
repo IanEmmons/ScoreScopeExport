@@ -1,13 +1,8 @@
-package org.virginiaso.score_scope_export.gui;
+package org.virginiaso.score_scope_export;
 
 import java.util.Objects;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.virginiaso.score_scope_export.KnackApp;
-import org.virginiaso.score_scope_export.PortalUserToken;
-import org.virginiaso.score_scope_export.TeamRankByEventRetrieverFactory;
-import org.virginiaso.score_scope_export.TeamResultsRetrieverFactory;
-import org.virginiaso.score_scope_export.TournamentRetrieverFactory;
 
 import javafx.concurrent.Task;
 

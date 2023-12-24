@@ -1,4 +1,4 @@
-package org.virginiaso.score_scope_export.gui;
+package org.virginiaso.score_scope_export;
 
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
