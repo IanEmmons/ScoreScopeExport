@@ -1,5 +1,6 @@
 package org.virginiaso.score_scope_export;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -53,6 +54,8 @@ public class LoginPage extends WizardPage {
 		grid.add(pwLbl, 0, ++rowIndex);
 		grid.add(pwBox, 1, rowIndex);
 
+		Platform.runLater(() -> userNameBox.requestFocus());
+
 		return grid;
 	}
 
@@ -73,6 +76,7 @@ public class LoginPage extends WizardPage {
 		knackAppGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
 			WizardData.inst().knackApp.setValue((KnackApp) newValue.getUserData());
 		});
+		knackAppGroup.selectToggle(knackAppGroup.getToggles().getFirst());
 
 		var knackAppPane = new TilePane();
 		knackAppPane.setOrientation(Orientation.VERTICAL);

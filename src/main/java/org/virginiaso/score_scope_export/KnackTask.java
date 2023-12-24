@@ -16,7 +16,7 @@ public class KnackTask extends Task<Void> {
 		this.knackApp = Objects.requireNonNull(knackApp, "knackApp");
 		this.userName = Objects.requireNonNull(userName, "userName");
 		this.password = Objects.requireNonNull(password, "password");
-		hasSucceeded = true;
+		hasSucceeded = false;
 
 		updateTitle("Fetching data from %1$s".formatted(this.knackApp.title()));
 	}
@@ -40,6 +40,7 @@ public class KnackTask extends Task<Void> {
 				TeamRankByEventRetrieverFactory.create(knackApp).retrieveReport());
 
 			updateMessage("Data retrieval complete.");
+			hasSucceeded = true;
 		} catch (RuntimeException ex) {
 			hasSucceeded = false;
 			Pair<String, String> msg = Alerts.getNestedExceptionMessage(ex);

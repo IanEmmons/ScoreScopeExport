@@ -68,6 +68,7 @@ public class TournamentPage extends WizardPage {
 		tourneys.forEach(
 			tourney -> divisions.forEach(
 				division -> addRadioButton(tourney, division, toggleGroup, tourneyChoicePane)));
+		toggleGroup.selectToggle(toggleGroup.getToggles().getFirst());
 
 		grid.add(tourneyChoicePane, 0, ++rowIndex, 2, 1);
 
@@ -97,7 +98,9 @@ public class TournamentPage extends WizardPage {
 		} else {
 			var fileChooser = new FileChooser();
 			fileChooser.setTitle("Choose Duosmium export file");
-			fileChooser.setInitialFileName("duosmium-upload.xlsx");
+			fileChooser.setInitialFileName("%1$s-%2$s.xlsx".formatted(
+				WizardData.inst().selectedTournament.get(),
+				WizardData.inst().selectedDivision.get()));
 			fileChooser.getExtensionFilters().addAll(
 				new FileChooser.ExtensionFilter("Excel Workbook (.xlsx)", "*.xlsx"),
 				new FileChooser.ExtensionFilter("All Files", "*.*"));

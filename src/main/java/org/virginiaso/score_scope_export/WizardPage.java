@@ -20,7 +20,7 @@ public abstract class WizardPage extends VBox {
 	public WizardPage(String id) {
 		cancelButton = new Button("Cancel");
 		prevButton = new Button("_Previous");
-		nextButton = new Button("N_ext");
+		nextButton = new Button("_Next");
 		finishButton = new Button("_Finish");
 
 		setId(id);

@@ -14,7 +14,7 @@ public class ExportWriterTask extends Task<Void> {
 
 	public ExportWriterTask(File outputFile) {
 		this.outputFile = Objects.requireNonNull(outputFile, "outputFile");
-		hasSucceeded = true;
+		hasSucceeded = false;
 		updateTitle("Duosmium File Export");
 	}
 
@@ -32,6 +32,7 @@ public class ExportWriterTask extends Task<Void> {
 				WizardData.inst().teamResults, WizardData.inst().teamRanksByEvent);
 
 			updateMessage("Duosmium export complete.");
+			hasSucceeded = true;
 		} catch (IOException | RuntimeException ex) {
 			hasSucceeded = false;
 			Pair<String, String> msg = Alerts.getNestedExceptionMessage(ex);

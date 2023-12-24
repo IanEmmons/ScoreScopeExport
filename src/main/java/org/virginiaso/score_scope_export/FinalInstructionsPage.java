@@ -1,8 +1,10 @@
 package org.virginiaso.score_scope_export;
 
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
@@ -28,6 +30,12 @@ public class FinalInstructionsPage extends WizardPage {
 		scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
 		grid.add(scenetitle, 0, ++rowIndex, 1, 1);
 
+		var againButton = new Button("Export _Another");
+		againButton.setMnemonicParsing(true);
+		againButton.setOnAction(event -> navTo(ExportWizard.TOURNAMENT_PAGE_ID));
+		GridPane.setHalignment(againButton, HPos.RIGHT);
+		grid.add(againButton, 1, rowIndex, 1, 1);
+
 		var instructions = new TextArea();
 		instructions.setFont(Font.font("Tahoma", FontWeight.NORMAL, 12));
 		instructions.setWrapText(true);
@@ -44,7 +52,7 @@ public class FinalInstructionsPage extends WizardPage {
 			* Preview the input template, correct issues, and submit.
 
 			""".formatted(WizardData.inst().knackApp.getValue().title()));
-		grid.add(instructions, 0, ++rowIndex, 1, 1);
+		grid.add(instructions, 0, ++rowIndex, 2, 1);
 
 		return grid;
 	}
