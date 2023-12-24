@@ -34,14 +34,14 @@ public record Tournament(
 		return year;
 	}
 
-	public int numMedalsPerEvent() {
-		return "B".equals(Config.inst().getTournamentDivision())
+	public int numMedalsPerEvent(String division) {
+		return "B".equals(division)
 			? numBMedalsPerEvent()
 			: numCMedalsPerEvent();
 	}
 
-	public int numTrophies() {
-		return "B".equals(Config.inst().getTournamentDivision())
+	public int numTrophies(String division) {
+		return "B".equals(division)
 			? numBTrophies()
 			: numCTrophies();
 	}

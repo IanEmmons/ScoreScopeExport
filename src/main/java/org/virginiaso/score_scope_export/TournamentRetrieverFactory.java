@@ -66,12 +66,12 @@ public class TournamentRetrieverFactory {
 
 	private TournamentRetrieverFactory() {}	// prevent instantiation
 
-	public static PortalRetriever<Tournament> create() {
+	public static PortalRetriever<Tournament> create(KnackApp knackApp) {
 		Gson gson = new GsonBuilder()
 			.setPrettyPrinting()
 			.registerTypeAdapter(Tournament.class, new TournamentSerializer())
 			.create();
-		return new PortalRetriever<>(gson, "tournaments",
+		return new PortalRetriever<>(gson, knackApp, KnackView.TOURNAMENTS,
 			new TypeToken<ReportResponse<Tournament>>(){}.getType());
 	}
 }
