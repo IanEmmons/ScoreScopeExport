@@ -59,20 +59,3 @@ java {
 		languageVersion.set(JavaLanguageVersion.of(21))
 	}
 }
-
-application {
-	mainClass.set("org.virginiaso.score_scope_export.App")
-}
-
-task<JavaExec>("createDuosmiumUpload") {
-	dependsOn("classes")
-	mainClass = "org.virginiaso.score_scope_export.App"
-	classpath = java.sourceSets["main"].runtimeClasspath
-}
-
-task<JavaExec>("getPortalData") {
-	dependsOn("classes")
-	mainClass = "org.virginiaso.score_scope_export.PortalRetriever"
-	classpath = java.sourceSets["main"].runtimeClasspath
-	systemProperty("portal.password", "${project.properties["portalPassword"]}")
-}
