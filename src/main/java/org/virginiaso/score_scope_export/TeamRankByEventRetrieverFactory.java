@@ -80,12 +80,12 @@ public class TeamRankByEventRetrieverFactory {
 
 	private TeamRankByEventRetrieverFactory() {}	// prevent instantiation
 
-	public static PortalRetriever<TeamRankByEvent> create() {
+	public static PortalRetriever<TeamRankByEvent> create(KnackApp knackApp) {
 		Gson gson = new GsonBuilder()
 			.setPrettyPrinting()
 			.registerTypeAdapter(TeamRankByEvent.class, new TeamRankByEventSerializer())
 			.create();
-		return new PortalRetriever<>(gson, "ranks",
+		return new PortalRetriever<>(gson, knackApp, KnackView.RANKS,
 			new TypeToken<ReportResponse<TeamRankByEvent>>(){}.getType());
 	}
 }

@@ -77,12 +77,12 @@ public class TeamResultsRetrieverFactory {
 
 	private TeamResultsRetrieverFactory() {}	// prevent instantiation
 
-	public static PortalRetriever<TeamResults> create() {
+	public static PortalRetriever<TeamResults> create(KnackApp knackApp) {
 		Gson gson = new GsonBuilder()
 			.setPrettyPrinting()
 			.registerTypeAdapter(TeamResults.class, new TeamResultsSerializer())
 			.create();
-		return new PortalRetriever<>(gson, "team_results",
+		return new PortalRetriever<>(gson, knackApp, KnackView.TEAM_RESULTS,
 			new TypeToken<ReportResponse<TeamResults>>(){}.getType());
 	}
 }

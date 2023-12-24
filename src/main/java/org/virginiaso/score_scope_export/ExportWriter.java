@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -20,52 +21,37 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbookType;
 
-public class App {
+public class ExportWriter {
 	private static final String SUB_TITLE_TEXT
 		= "Copy yellow cells and paste (values only) into Duosmium template";
 	private static final int DEFAULT_ZOOM = 140;
 
 	private final File outputFile;
+	private final String tournamentName;
+	private final String division;
 	private Workbook workbook;
 	private EnumMap<Style, CellStyle> styles;
 
-	public static void main(String[] args) {
-		try {
-			App app = new App(args);
-			app.run();
-		} catch (CmdLineException ex) {
-			if (ex.getMessage() != null && !ex.getMessage().isBlank()) {
-				System.out.format("%n%1$s%n%n", ex.getMessage());
-			}
-		} catch (Throwable ex) {
-			ex.printStackTrace();
-		}
+	public ExportWriter(File outputFile, String tournamentName, String division) {
+		this.outputFile = Objects.requireNonNull(outputFile, "outputFile");
+		this.tournamentName = Objects.requireNonNull(tournamentName, "tournamentName");
+		this.division = Objects.requireNonNull(division, "division");
 	}
 
-	/** @throws CmdLineException If the syntax of the command line is incorrect. */
-	private App(String[] args) throws CmdLineException {
-		outputFile = Config.inst().getOutputFile();
-	}
-
-	private void run() throws IOException {
-		Tournament tournament = TournamentRetrieverFactory.create()
-			.readLatestReportFile()
-			.stream()
-			.filter(t -> Config.inst().getTournamentName().equals(t.name()))
+	public void writeExport(List<Tournament> allTournaments, List<TeamResults> allTeamResults,
+			List<TeamRankByEvent> allTeamRanksByEvent) throws IOException {
+		Tournament tournament = allTournaments.stream()
+			.filter(t -> tournamentName.equals(t.name()))
 			.findFirst()
 			.orElseThrow(() -> new IllegalStateException(
-				"No tournaments with name " + Config.inst().getTournamentName()));
-		List<TeamResults> teamResults = TeamResultsRetrieverFactory.create()
-			.readLatestReportFile()
-			.stream()
-			.filter(tr -> Config.inst().getTournamentName().equals(tr.tournamentName()))
-			.filter(tr -> Config.inst().getTournamentDivision().equals(tr.division()))
+				"No tournaments with name " + tournamentName));
+		List<TeamResults> teamResults = allTeamResults.stream()
+			.filter(tr -> tournamentName.equals(tr.tournamentName()))
+			.filter(tr -> division.equals(tr.division()))
 			.toList();
-		List<TeamRankByEvent> ranks = TeamRankByEventRetrieverFactory.create()
-			.readLatestReportFile()
-			.stream()
-			.filter(r -> Config.inst().getTournamentName().equals(r.tournamentName()))
-			.filter(r -> Config.inst().getTournamentDivision().equals(r.division()))
+		List<TeamRankByEvent> ranks = allTeamRanksByEvent.stream()
+			.filter(r -> tournamentName.equals(r.tournamentName()))
+			.filter(r -> division.equals(r.division()))
 			.toList();
 
 		try (Workbook wkbk = new XSSFWorkbook(XSSFWorkbookType.XLSX)) {
@@ -88,19 +74,19 @@ public class App {
 		sheet.setZoom(DEFAULT_ZOOM);
 		var rowNum = 1;
 
-		addOverviewRow(sheet, ++rowNum, "1A. Name", Config.inst().getTournamentName());
-		addOverviewRow(sheet, ++rowNum, "1B. Short Name", Config.inst().getTournamentName());
+		addOverviewRow(sheet, ++rowNum, "1A. Name", tournamentName);
+		addOverviewRow(sheet, ++rowNum, "1B. Short Name", tournamentName);
 		addOverviewRow(sheet, ++rowNum, "1C. Location", "");
 		addOverviewRow(sheet, ++rowNum, "1D. State", "");
 		addOverviewRow(sheet, ++rowNum, "1E. Level", "");
-		addOverviewRow(sheet, ++rowNum, "1F. Division", Config.inst().getTournamentDivision());
+		addOverviewRow(sheet, ++rowNum, "1F. Division", division);
 		addOverviewRow(sheet, ++rowNum, "1G. Year", Integer.toString(tournament.competitionYear()));
 		addOverviewRow(sheet, ++rowNum, "1H. Date", tournament.formattedDate());
 		addOverviewRow(sheet, ++rowNum, "1I. Start Date", "");
 		addOverviewRow(sheet, ++rowNum, "1J. End Date", "");
 		addOverviewRow(sheet, ++rowNum, "1K. Awards Date", tournament.formattedDate());
-		addOverviewRow(sheet, ++rowNum, "1L. Medals", Integer.toString(tournament.numMedalsPerEvent()));
-		addOverviewRow(sheet, ++rowNum, "1M. Trophies", Integer.toString(tournament.numTrophies()));
+		addOverviewRow(sheet, ++rowNum, "1L. Medals", Integer.toString(tournament.numMedalsPerEvent(division)));
+		addOverviewRow(sheet, ++rowNum, "1M. Trophies", Integer.toString(tournament.numTrophies(division)));
 		addOverviewRow(sheet, ++rowNum, "1N. Bids", "0");
 		addOverviewRow(sheet, ++rowNum, "1O. N-Offset", "0");
 		addOverviewRow(sheet, ++rowNum, "1P. Drops", "0");
