@@ -39,4 +39,8 @@ public class Config {
 		}
 		return "scene_%1$s/views/view_%2$s".formatted(viewNums[0], viewNums[1]);
 	}
+
+	public String getKnackFieldId(KnackApp knackApp, Field field) {
+		return props.getProperty("field.%1$s.%2$s".formatted(field, knackApp));
+	}
 }

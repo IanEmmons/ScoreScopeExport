@@ -1,51 +1,29 @@
 package org.virginiaso.score_scope_export;
 
 import java.lang.reflect.Type;
-import java.math.BigDecimal;
+import java.util.Objects;
 
 import org.virginiaso.score_scope_export.PortalRetriever.ReportResponse;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 
 public class TeamResultsRetrieverFactory {
-	private static class TeamResultsSerializer implements JsonSerializer<TeamResults>,
-			JsonDeserializer<TeamResults> {
-		@Override
-		public JsonElement serialize(TeamResults src, Type typeOfSrc, JsonSerializationContext context) {
-			var tournament = new JsonObject();
-			tournament.add("id", new JsonPrimitive(src.tournamentId()));
-			tournament.add("identifier", new JsonPrimitive(src.tournamentName()));
+	private static class TeamResultsSerializer implements JsonDeserializer<TeamResults> {
+		private KnackApp knackApp;
 
-			var tournamentArray = new JsonArray();
-			tournamentArray.add(tournament);
+		public TeamResultsSerializer(KnackApp knackApp) {
+			this.knackApp = Objects.requireNonNull(knackApp, "knackApp");
+		}
 
-			var result = new JsonObject();
-			result.add("id", new JsonPrimitive(src.teamId()));
-			result.add("field_1857", tournamentArray);
-			result.add("field_1143.field_12", new JsonPrimitive(src.division()));
-			result.add("field_12", new JsonPrimitive(src.division()));
-			result.add("field_1478", new JsonPrimitive(src.teamNum()));
-			result.add("field_1142.field_1862", new JsonPrimitive(src.schoolName()));
-			result.add("field_1862", new JsonPrimitive(src.schoolName()));
-			result.add("field_2039", new JsonPrimitive(src.teamName()));
-			result.add("field_1142.field_2037", new JsonPrimitive(src.cityState()));
-			result.add("field_2037", new JsonPrimitive(src.cityState()));
-			result.add("field_1979", new JsonPrimitive(src.isExhibitionTeam()));
-			result.add("field_1754", new JsonPrimitive(src.scoreNoPenalty()));
-			result.add("field_1947", new JsonPrimitive(src.penalty()));
-			result.add("field_1948", new JsonPrimitive(src.finalScore()));
-			return result;
+		private String field(Field field) {
+			return Config.inst().getKnackFieldId(knackApp, field);
 		}
 
 		@Override
@@ -53,25 +31,42 @@ public class TeamResultsRetrieverFactory {
 				JsonDeserializationContext context) throws JsonParseException {
 			var jObj = json.getAsJsonObject();
 
-			var tournamentId = Util.normalizeSpace(jObj.get("field_1857")
-				.getAsJsonArray().get(0).getAsJsonObject()
-				.get("id").getAsString());
-			var tournamentName = Util.normalizeSpace(jObj.get("field_1857")
-				.getAsJsonArray().get(0).getAsJsonObject()
-				.get("identifier").getAsString());
-			var division = Util.normalizeSpace(jObj.get("field_12").getAsString());
-			String teamId = Util.normalizeSpace(jObj.get("id").getAsString());
-			String teamNum = Util.normalizeSpace(jObj.get("field_1478").getAsString());
-			String schoolName = Util.normalizeSpace(jObj.get("field_1862").getAsString());
-			String teamName = Util.normalizeSpace(jObj.get("field_2039").getAsString());
-			String cityState = Util.normalizeSpace(jObj.get("field_2037").getAsString());
-			boolean isExhibitionTeam = jObj.get("field_1979").getAsBoolean();
-			BigDecimal scoreNoPenalty = Util.getAsBigDecimal(jObj.get("field_1754"));
-			BigDecimal penalty = Util.getAsBigDecimal(jObj.get("field_1947"));
-			BigDecimal finalScore = Util.getAsBigDecimal(jObj.get("field_1948"));
-			return new TeamResults(tournamentId, tournamentName, division, teamId, teamNum,
-				schoolName, teamName, cityState, isExhibitionTeam, scoreNoPenalty, penalty,
-				finalScore);
+			var tournamentId = Util.normalizeSpace(jObj
+				.get(field(Field.TOURNAMENTS_TOURNAMENT)).getAsJsonArray().get(0)
+				.getAsJsonObject().get("id").getAsString());
+			var tournamentName = Util.normalizeSpace(jObj
+				.get(field(Field.TOURNAMENTS_TOURNAMENT)).getAsJsonArray().get(0)
+				.getAsJsonObject().get("identifier").getAsString());
+			var teamId = Util.normalizeSpace(jObj.get("id").getAsString());
+			var teamNum = Util.normalizeSpace(jObj
+				.get(field(Field.TEAMS_TEAM_NUM)).getAsString());
+			var schoolName = Util.normalizeSpace(jObj
+				.get(field(Field.SCHOOL_SCHOOL_NAME)).getAsString());
+			var teamName = Util.normalizeSpace(jObj
+				.get(field(Field.TEAMS_TEAM_NAME)).getAsString());
+			var cityState = Util.normalizeSpace(jObj
+				.get(field(Field.SCHOOL_CITY_STATE)).getAsString());
+			var isExhibitionTeam = Util.getAsBoolean(jObj
+				.get(field(Field.TEAMS_EXHIBITION_TEAM)));
+			var scoreNoPenalty = Util.getAsBigDecimal(jObj
+				.get(field(Field.TEAMS_SUMMED_TEAM_POINT_SCORE)));
+			var penalty = Util.getAsBigDecimal(jObj.get(field(Field.TEAMS_PENALTY)));
+			var finalScore = Util.getAsBigDecimal(jObj
+				.get(field(Field.TEAMS_TEAM_POINT_SCORE)));
+			return new TeamResults(tournamentId, tournamentName, getDivision(jObj), teamId,
+				teamNum, schoolName, teamName, cityState, isExhibitionTeam, scoreNoPenalty,
+				penalty, finalScore);
+		}
+
+		private String getDivision(JsonObject jObj) {
+			if (KnackApp.SCORE_SCOPE == knackApp) {
+				return Util.normalizeSpace(jObj
+					.get(field(Field.DIVISION_DIVISION)).getAsString());
+			} else {
+				return Util.normalizeSpace(jObj
+					.get(field(Field.DIVISION_DIVISION)).getAsJsonArray().get(0)
+					.getAsJsonObject().get("identifier").getAsString());
+			}
 		}
 	}
 
@@ -80,7 +75,7 @@ public class TeamResultsRetrieverFactory {
 	public static PortalRetriever<TeamResults> create(KnackApp knackApp) {
 		Gson gson = new GsonBuilder()
 			.setPrettyPrinting()
-			.registerTypeAdapter(TeamResults.class, new TeamResultsSerializer())
+			.registerTypeAdapter(TeamResults.class, new TeamResultsSerializer(knackApp))
 			.create();
 		return new PortalRetriever<>(gson, knackApp, KnackView.TEAM_RESULTS,
 			new TypeToken<ReportResponse<TeamResults>>(){}.getType());

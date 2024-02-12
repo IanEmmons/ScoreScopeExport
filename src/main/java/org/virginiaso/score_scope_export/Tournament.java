@@ -11,6 +11,8 @@ public record Tournament(
 	String name,
 	Instant date,
 	boolean oneTrophyPerSchool,
+	int numBBids,
+	int numCBids,
 	int numBMedalsPerEvent,
 	int numCMedalsPerEvent,
 	int numBTrophies,
@@ -32,6 +34,12 @@ public record Tournament(
 			++year;
 		}
 		return year;
+	}
+
+	public int numBids(String division) {
+		return "B".equals(division)
+			? numBBids()
+			: numCBids();
 	}
 
 	public int numMedalsPerEvent(String division) {

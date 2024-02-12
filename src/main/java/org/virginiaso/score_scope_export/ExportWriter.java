@@ -88,7 +88,7 @@ public class ExportWriter {
 		addOverviewRow(sheet, ++rowNum, "1K. Awards Date", tournament.formattedDate());
 		addOverviewRow(sheet, ++rowNum, "1L. Medals", Integer.toString(tournament.numMedalsPerEvent(division)));
 		addOverviewRow(sheet, ++rowNum, "1M. Trophies", Integer.toString(tournament.numTrophies(division)));
-		addOverviewRow(sheet, ++rowNum, "1N. Bids", "");
+		addOverviewRow(sheet, ++rowNum, "1N. Bids", numBids(tournament, division));
 		addOverviewRow(sheet, ++rowNum, "1O. N-Offset", "0");
 		addOverviewRow(sheet, ++rowNum, "1P. Drops", "0");
 		addOverviewRow(sheet, ++rowNum, "1Q. Source", "");
@@ -100,6 +100,11 @@ public class ExportWriter {
 
 	private static String tournamentNameForDuosmium(String name) {
 		return Pattern.compile(" *20[0-9][0-9] *").matcher(name).replaceAll(" ").strip();
+	}
+
+	private static String numBids(Tournament tournament, String division) {
+		var numBids = tournament.numBids(division);
+		return (numBids < 0) ? "" : Integer.toString(numBids);
 	}
 
 	private void addOverviewRow(Sheet sheet, int rowNum, String label, String value) {

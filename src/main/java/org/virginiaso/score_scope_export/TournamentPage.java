@@ -53,7 +53,7 @@ public class TournamentPage extends WizardPage {
 		tourneyChoicePane.setPadding(new Insets(5, 5, 5, 5));
 		tourneyChoicePane.setVgap(5);
 		tourneyChoicePane.setBorder(Border.stroke(null));
-		tourneyChoicePane.setPrefRows(3);
+		tourneyChoicePane.setPrefRows(divisions.size() * tourneys.size() + 1);
 		tourneyChoicePane.setPrefColumns(1);
 		tourneyChoicePane.getChildren().add(tourneyChoiceLabel);
 

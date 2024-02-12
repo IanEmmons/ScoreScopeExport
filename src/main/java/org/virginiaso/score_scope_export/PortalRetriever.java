@@ -1,5 +1,6 @@
 package org.virginiaso.score_scope_export;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -101,6 +102,26 @@ public class PortalRetriever<Item> {
 				retriever.lastPageRead = response.current_page;
 			}
 			return response.records;
+		} catch (IOException ex) {
+			throw new UncheckedIOException(ex);
+		}
+	}
+
+	public void saveRawReport(String reportName) {
+		var fileName = "raw-%1$s-%2$s-report-body.json".formatted(knackApp, reportName);
+		var httpRequest = getHttpRequest(1);
+		try (var httpClient = HttpClient.newHttpClient()) {
+			httpClient
+				.sendAsync(httpRequest, BodyHandlers.ofInputStream())
+				.thenApply(HttpResponse::body)
+				.thenAccept(is -> writeToFile(is, fileName))
+				.join();
+		}
+	}
+
+	private static void writeToFile(InputStream is, String fileName) {
+		try (var os = new FileOutputStream(fileName)) {
+			is.transferTo(os);
 		} catch (IOException ex) {
 			throw new UncheckedIOException(ex);
 		}

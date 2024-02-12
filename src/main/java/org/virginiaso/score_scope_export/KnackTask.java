@@ -28,22 +28,27 @@ public class KnackTask extends Task<Void> {
 			PortalUserToken.inst().initialize(knackApp, userName, password);
 
 			updateMessage("Fetching the list of tournaments...");
-			WizardData.inst().replaceTournaments(
-				TournamentRetrieverFactory.create(knackApp).retrieveReport());
+			var tournamentRetriever = TournamentRetrieverFactory.create(knackApp);
+			//tournamentRetriever.saveRawReport("tournaments");
+			WizardData.inst().replaceTournaments(tournamentRetriever.retrieveReport());
 
 			updateMessage("Fetching the list of teams...");
-			WizardData.inst().replaceTeamResults(
-				TeamResultsRetrieverFactory.create(knackApp).retrieveReport());
+			var teamResultsRetriever = TeamResultsRetrieverFactory.create(knackApp);
+			//teamResultsRetriever.saveRawReport("team-results");
+			WizardData.inst().replaceTeamResults(teamResultsRetriever.retrieveReport());
 
 			updateMessage("Fetching team ranks in each event...");
-			WizardData.inst().replaceRanks(
-				TeamRankByEventRetrieverFactory.create(knackApp).retrieveReport());
+			var teamRankByEventRetriever = TeamRankByEventRetrieverFactory.create(knackApp);
+			//teamRankByEventRetriever.saveRawReport("ranks");
+			WizardData.inst().replaceRanks(teamRankByEventRetriever.retrieveReport());
 
 			updateMessage("Data retrieval complete.");
 			hasSucceeded = true;
 		} catch (RuntimeException ex) {
 			hasSucceeded = false;
 			Pair<String, String> msg = Alerts.getNestedExceptionMessage(ex);
+			System.out.println(msg.getLeft());
+			System.out.println(msg.getRight());
 			updateMessage("%1$s: %2$s".formatted(msg.getLeft(), msg.getRight()));
 		}
 		updateProgress(1, 1);
