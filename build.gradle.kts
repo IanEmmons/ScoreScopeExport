@@ -7,7 +7,8 @@ repositories {
 	mavenCentral()
 }
 
-val javaFxVersion = "21.0.1"
+val javaFxVersion = "21.0.2"
+val isIntelArchitecture = true
 
 dependencies {
 	implementation("org.apache.commons:commons-lang3:3.14.0")
@@ -17,9 +18,13 @@ dependencies {
 	// This forces POI's log4j dependency to the latest 2.x version:
 	implementation("org.apache.logging.log4j:log4j-core:2.22.0")
 
-	runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:win")
-	runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:linux")
-	runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:mac")
+	if (isIntelArchitecture) {
+		runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:win")
+		runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:linux")
+		runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:mac")
+	} else {
+		runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:mac-aarch64")
+	}
 }
 
 java {
@@ -39,6 +44,11 @@ tasks.jar {
 
 javafx {
 	version = "$javaFxVersion"
+	//platform = "win"
+	//platform = "mac"
+	//platform = "mac-aarch64"
+	//platform = "linux"
+	//platform = "linux-aarch64"
 	modules("javafx.controls")
 }
 

@@ -79,6 +79,16 @@ public record TeamResults(
 		return splitCityState()[1].strip();
 	}
 
+	public String adjustedTeamName(TournamentLevel tournamentLevel) {
+		if (tournamentLevel == TournamentLevel.STATE) {
+			return "";
+		} else if ("Regional Team".equals(teamName())) {
+			return "";
+		} else {
+			return teamName();
+		}
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(teamId());

@@ -61,7 +61,7 @@ public class ExportWriter {
 
 			createOverviewSheet(tournament);
 			createEventSheet(ranks);
-			createTeamSheet(teamResults);
+			createTeamSheet(teamResults, tournament.tournamentLevel());
 			createPlacingsSheet(teamResults, ranks);
 			writeOutputFile();
 
@@ -79,7 +79,7 @@ public class ExportWriter {
 		addOverviewRow(sheet, ++rowNum, "1B. Short Name", "");
 		addOverviewRow(sheet, ++rowNum, "1C. Location", "");
 		addOverviewRow(sheet, ++rowNum, "1D. State", "");
-		addOverviewRow(sheet, ++rowNum, "1E. Level", "");
+		addOverviewRow(sheet, ++rowNum, "1E. Level", tournament.tournamentLevel().label());
 		addOverviewRow(sheet, ++rowNum, "1F. Division", division);
 		addOverviewRow(sheet, ++rowNum, "1G. Year", Integer.toString(tournament.competitionYear()));
 		addOverviewRow(sheet, ++rowNum, "1H. Date", tournament.formattedDate());
@@ -144,7 +144,7 @@ public class ExportWriter {
 		addTitleRow(sheet, 1, Style.SUB_TITLE, SUB_TITLE_TEXT);
 	}
 
-	private void createTeamSheet(List<TeamResults> teamResults) {
+	private void createTeamSheet(List<TeamResults> teamResults, TournamentLevel tournamentLevel) {
 		var sheet = workbook.createSheet("4. Teams");
 		sheet.setZoom(DEFAULT_ZOOM);
 		var rowNum = 1;
@@ -165,7 +165,7 @@ public class ExportWriter {
 			entries.add(teamResult.bareTeamNum());
 			entries.add(teamResult.schoolNameForDuosmium());
 			entries.add(teamResult.schoolAbbrevForDuosmium());
-			entries.add(teamResult.teamName());
+			entries.add(teamResult.adjustedTeamName(tournamentLevel));
 			entries.add(teamResult.city());
 			entries.add(teamResult.state());
 			entries.add("");

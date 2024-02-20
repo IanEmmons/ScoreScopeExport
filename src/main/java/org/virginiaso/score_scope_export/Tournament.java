@@ -10,6 +10,7 @@ public record Tournament(
 	String id,
 	String name,
 	Instant date,
+	TournamentLevel tournamentLevel,
 	boolean oneTrophyPerSchool,
 	int numBBids,
 	int numCBids,

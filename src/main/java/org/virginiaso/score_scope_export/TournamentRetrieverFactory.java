@@ -42,9 +42,19 @@ public class TournamentRetrieverFactory {
 			var numCMedalsPerEvent = jObj.get(field(Field.TOURNAMENTS_NUM_C_MEDALS)).getAsInt();
 			var numBTrophies = jObj.get(field(Field.TOURNAMENTS_NUM_B_TROPHIES)).getAsInt();
 			var numCTrophies = jObj.get(field(Field.TOURNAMENTS_NUM_C_TROPHIES)).getAsInt();
-			return new Tournament(id, name, dateTime, isOneTrophyPerSchool(jObj),
-				numBBids, numCBids, numBMedalsPerEvent, numCMedalsPerEvent,
-				numBTrophies, numCTrophies);
+			return new Tournament(id, name, dateTime, tournamentLevel(jObj),
+				isOneTrophyPerSchool(jObj), numBBids, numCBids, numBMedalsPerEvent,
+				numCMedalsPerEvent, numBTrophies, numCTrophies);
+		}
+
+		private TournamentLevel tournamentLevel(JsonObject jObj) {
+			if (KnackApp.SCORE_SCOPE == knackApp) {
+				return TournamentLevel.INVITATIONAL;
+			} else {
+				return Util.getAsBoolean(jObj.get(field(Field.TOURNAMENTS_IS_STATE_TOURNAMENT)))
+					? TournamentLevel.STATE
+					: TournamentLevel.REGIONAL;
+			}
 		}
 
 		private boolean isOneTrophyPerSchool(JsonObject jObj) {
