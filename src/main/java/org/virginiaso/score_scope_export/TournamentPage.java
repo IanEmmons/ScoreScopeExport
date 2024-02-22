@@ -1,5 +1,8 @@
 package org.virginiaso.score_scope_export;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import javafx.geometry.Insets;
@@ -24,15 +27,15 @@ public class TournamentPage extends WizardPage {
 
 	@Override
 	protected Parent getContent() {
-		var divisions = WizardData.inst().teamResults.stream()
-			.map(TeamResults::division)
-			.distinct()
-			.sorted()
-			.toList();
-
-		var tourneys = WizardData.inst().tournaments.stream()
-			.map(Tournament::name)
-			.toList();
+		List<Pair<String, String>> tourneyDivPairs = new ArrayList<>();
+		for (var tourney : WizardData.inst().tournaments) {
+			WizardData.inst().teamResults.stream()
+				.filter(teamResult -> teamResult.tournamentId().equals(tourney.id()))
+				.map(TeamResults::division)
+				.distinct()
+				.sorted()
+				.forEach(div -> tourneyDivPairs.add(Pair.of(tourney.name(), div)));
+		}
 
 		var rowIndex = -1;
 
@@ -53,7 +56,7 @@ public class TournamentPage extends WizardPage {
 		tourneyChoicePane.setPadding(new Insets(5, 5, 5, 5));
 		tourneyChoicePane.setVgap(5);
 		tourneyChoicePane.setBorder(Border.stroke(null));
-		tourneyChoicePane.setPrefRows(divisions.size() * tourneys.size() + 1);
+		tourneyChoicePane.setPrefRows(tourneyDivPairs.size() + 1);
 		tourneyChoicePane.setPrefColumns(1);
 		tourneyChoicePane.getChildren().add(tourneyChoiceLabel);
 
@@ -65,9 +68,8 @@ public class TournamentPage extends WizardPage {
 			WizardData.inst().selectedDivision.setValue(userData.getRight());
 		});
 
-		tourneys.forEach(
-			tourney -> divisions.forEach(
-				division -> addRadioButton(tourney, division, toggleGroup, tourneyChoicePane)));
+		tourneyDivPairs.forEach(pair ->
+			addRadioButton(pair.getLeft(), pair.getRight(), toggleGroup, tourneyChoicePane));
 		toggleGroup.selectToggle(toggleGroup.getToggles().getFirst());
 
 		grid.add(tourneyChoicePane, 0, ++rowIndex, 2, 1);

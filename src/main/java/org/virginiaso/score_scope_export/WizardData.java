@@ -1,6 +1,7 @@
 package org.virginiaso.score_scope_export;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javafx.beans.property.Property;
@@ -39,6 +40,7 @@ public class WizardData {
 	public void replaceTournaments(List<Tournament> newValues) {
 		tournaments.clear();
 		tournaments.addAll(newValues);
+		tournaments.sort(Comparator.comparing(Tournament::name));
 	}
 
 	public void replaceTeamResults(List<TeamResults> newValues) {
