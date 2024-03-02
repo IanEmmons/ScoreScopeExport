@@ -5,3 +5,7 @@
 bin/
 build/
 ~$*.xlsx
+exports-2024/
+field-mappings.xlsx
+raw-json/
+ScoreScopeExport-*.jar
