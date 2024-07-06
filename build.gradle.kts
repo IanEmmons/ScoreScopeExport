@@ -19,10 +19,11 @@ dependencies {
 	implementation("org.apache.logging.log4j:log4j-core:2.22.0")
 
 	if (isIntelArchitecture) {
-		runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:win")
 		runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:linux")
 		runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:mac")
+		runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:win")
 	} else {
+		runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:linux-aarch64")
 		runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:mac-aarch64")
 	}
 }
