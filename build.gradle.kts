@@ -7,16 +7,16 @@ repositories {
 	mavenCentral()
 }
 
-val javaFxVersion = "21.0.2"
+val javaFxVersion = "21.0.3"
 val isIntelArchitecture = true
 
 dependencies {
 	implementation("org.apache.commons:commons-lang3:3.14.0")
-	implementation("com.google.code.gson:gson:2.10.1")
-	implementation("org.apache.poi:poi-ooxml:5.2.5")
+	implementation("com.google.code.gson:gson:2.11.0")
+	implementation("org.apache.poi:poi-ooxml:5.3.0")
 
 	// This forces POI's log4j dependency to the latest 2.x version:
-	implementation("org.apache.logging.log4j:log4j-core:2.22.0")
+	implementation("org.apache.logging.log4j:log4j-core:2.23.1")
 
 	if (isIntelArchitecture) {
 		runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:linux")
@@ -60,7 +60,7 @@ application {
 testing {
 	suites {
 		val test by getting(JvmTestSuite::class) {
-			useJUnitJupiter("5.10.1")
+			useJUnitJupiter("5.10.3")
 		}
 	}
 }
