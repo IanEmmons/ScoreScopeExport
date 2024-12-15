@@ -14,18 +14,10 @@ public class SchoolNameTest {
 	public void testDuosmiumSchoolName(String input, String expected, String abbrevName) {
 		var team = new TeamResults("", "", "", "", "", input, "", ",", false,
 			BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
-		var actual = team.schoolNameForDuosmium();
-		assertEquals(expected, actual);
-	}
 
-	@SuppressWarnings("static-method")
-	@ParameterizedTest
-	@CsvFileSource(resources = "/schoolNames.txt", numLinesToSkip = 1, delimiter = '|')
-	public void testDuosmiumAbbrevName(String input, String expected, String abbrevName) {
-		var team = new TeamResults("", "", "", "", "", input, "", ",", false,
-			BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
-		var actual = team.schoolAbbrevForDuosmium();
+		assertEquals(expected, team.schoolNameForDuosmium());
+
 		var abbrevNameNonNull = (abbrevName == null) ? "" : abbrevName;
-		assertEquals(abbrevNameNonNull, actual);
+		assertEquals(abbrevNameNonNull, team.schoolAbbrevForDuosmium());
 	}
 }

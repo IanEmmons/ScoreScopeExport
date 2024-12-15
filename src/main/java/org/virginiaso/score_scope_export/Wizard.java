@@ -86,8 +86,10 @@ public class Wizard extends StackPane {
 	}
 
 	public void finish() {
+		// Do nothing
 	}
 
 	public void cancel() {
+		// Do nothing
 	}
 }

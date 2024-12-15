@@ -21,7 +21,8 @@ public record TeamRankByEvent(
 
 	private static final List<Pair<Pattern, String>> EVENT_TRANSLATIONS = List.of(
 		Pair.of(Pattern.compile(" +[BC]$"), ""),
-		Pair.of(Pattern.compile("^Anatomy \\& Physiology$"), "Anatomy and Physiology")
+		Pair.of(Pattern.compile("^Anatomy \\& Physiology$"), "Anatomy and Physiology"),
+		Pair.of(Pattern.compile("^Potions \\& Poisons$"), "Potions and Poisons")
 		);
 
 	public String eventForDuosmium() {

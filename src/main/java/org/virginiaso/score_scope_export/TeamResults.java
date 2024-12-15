@@ -34,7 +34,7 @@ public record TeamResults(
 	private static final List<Pair<Pattern, String>> SCHOOL_ABBREV_TRANSLATIONS = List.of(
 		Pair.of(Pattern.compile("^BASIS Independent McLean$"), "BASIS McLean"),
 		Pair.of(Pattern.compile("^BASIS Washington, D\\.C\\.$"), "BASIS DC"),
-		Pair.of(Pattern.compile("^Frost MS$"), ""),			// empty ==> use original name
+		Pair.of(Pattern.compile("^Frost MS$"), "Frost Middle School"),
 		Pair.of(Pattern.compile("^Nysmith School$"), "")	// empty ==> use original name
 		// Add an entry for TJHSST
 		);
