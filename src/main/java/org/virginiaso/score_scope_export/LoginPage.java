@@ -73,7 +73,7 @@ public class LoginPage extends WizardPage {
 		var knackAppGroup = new ToggleGroup();
 		rb1.setToggleGroup(knackAppGroup);
 		rb2.setToggleGroup(knackAppGroup);
-		knackAppGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+		knackAppGroup.selectedToggleProperty().addListener((_, _, newValue) -> {
 			WizardData.inst().knackApp.setValue((KnackApp) newValue.getUserData());
 		});
 		knackAppGroup.selectToggle(knackAppGroup.getToggles().getFirst());

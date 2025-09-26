@@ -36,10 +36,10 @@ public abstract class WizardPage extends VBox {
 		nextButton.setMnemonicParsing(true);
 		finishButton.setMnemonicParsing(true);
 
-		cancelButton.setOnAction(event -> getWizard().cancel());
-		prevButton.setOnAction(event -> priorPage());
-		nextButton.setOnAction(event -> nextPage());
-		finishButton.setOnAction(event -> getWizard().finish());
+		cancelButton.setOnAction(_ -> getWizard().cancel());
+		prevButton.setOnAction(_ -> priorPage());
+		nextButton.setOnAction(_ -> nextPage());
+		finishButton.setOnAction(_ -> getWizard().finish());
 	}
 
 	private HBox getButtons() {

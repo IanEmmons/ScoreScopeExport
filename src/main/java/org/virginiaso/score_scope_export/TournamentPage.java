@@ -61,7 +61,7 @@ public class TournamentPage extends WizardPage {
 		tourneyChoicePane.getChildren().add(tourneyChoiceLabel);
 
 		var toggleGroup = new ToggleGroup();
-		toggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+		toggleGroup.selectedToggleProperty().addListener((_, _, newValue) -> {
 			@SuppressWarnings("unchecked")
 			var userData = (Pair<String, String>) newValue.getUserData();
 			WizardData.inst().selectedTournament.setValue(userData.getLeft());

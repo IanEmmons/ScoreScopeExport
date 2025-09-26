@@ -124,7 +124,7 @@ public class ExportWriter {
 		Map<String, Boolean> eventMap = ranks.stream().collect(Collectors.toMap(
 			TeamRankByEvent::eventForDuosmium,	// key mapper
 			TeamRankByEvent::isTrialEvent,		// value mapper
-			(v1, v2) -> v1,							// merge function - shouldn't be invoked
+			(v1, _) -> v1,								// merge function - shouldn't be invoked
 			LinkedHashMap::new));					// map factory
 
 		var sheet = workbook.createSheet("2. Events");

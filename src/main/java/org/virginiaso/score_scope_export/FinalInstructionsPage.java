@@ -46,7 +46,7 @@ public class FinalInstructionsPage extends WizardPage {
 
 		var againButton = new Button("Export _Another");
 		againButton.setMnemonicParsing(true);
-		againButton.setOnAction(event -> navTo(ExportWizard.TOURNAMENT_PAGE_ID));
+		againButton.setOnAction(_ -> navTo(ExportWizard.TOURNAMENT_PAGE_ID));
 		GridPane.setHalignment(againButton, HPos.RIGHT);
 		grid.add(againButton, 1, rowIndex, 1, 1);
 
