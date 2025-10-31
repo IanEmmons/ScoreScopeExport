@@ -7,11 +7,11 @@ repositories {
 	mavenCentral()
 }
 
-val javaFxVersion = "26-ea+7"
+val javaFxVersion = "26-ea+13"
 val isIntelArchitecture = false
 
 dependencies {
-	implementation("org.apache.commons:commons-lang3:3.18.0")
+	implementation("org.apache.commons:commons-lang3:3.19.0")
 	implementation("com.google.code.gson:gson:2.13.2")
 	implementation("org.apache.poi:poi-ooxml:5.4.1")
 
@@ -61,7 +61,7 @@ testing {
 	suites {
 		val test by getting(JvmTestSuite::class) {
 			// org.junit.jupiter:junit-jupiter
-			useJUnitJupiter("5.13.4")
+			useJUnitJupiter("5.14.0")
 		}
 	}
 }
