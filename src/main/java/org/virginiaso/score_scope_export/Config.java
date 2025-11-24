@@ -1,15 +1,22 @@
 package org.virginiaso.score_scope_export;
 
-import java.util.Properties;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
+import java.util.Arrays;
+import java.util.EnumMap;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.DuplicateHeaderMode;
 
 public class Config {
 	private static class ConfigHolder {
 		private static final Config INSTANCE = new Config();
 	}
 
-	private static final String CONFIGURATION_RESOURCE = "configuration.properties";
+	private static final String CONFIGURATION_RESOURCE = "configuration.csv";
 
-	private final Properties props;
+	private final EnumMap<KnackApp, EnumMap<ConfigItem, String>> configValues;
 
 	/**
 	 * Get the singleton instance of Config. This follows the "lazy initialization
@@ -23,24 +30,40 @@ public class Config {
 	}
 
 	private Config() {
-		props = Util.loadPropertiesFromResource(CONFIGURATION_RESOURCE);
-	}
-
-	public String getKnackAppId(KnackApp knackApp) {
-		return props.getProperty("application_id.%1$s".formatted(knackApp));
-	}
-
-	public String getKnackUrlPath(KnackApp knackApp, KnackView knackView) {
-		var propKey = "scene_view.%1$s.%2$s".formatted(knackView, knackApp);
-		var viewNums = props.getProperty(propKey, "").split(",");
-		if (viewNums.length != 2) {
-			throw new IllegalArgumentException(
-				"Configuration item %1$s must contain '<scene#>,<view#>'".formatted(propKey));
+		configValues = new EnumMap<>(KnackApp.class);
+		Arrays.stream(KnackApp.values())
+			.forEach(app -> configValues.put(app, new EnumMap<>(ConfigItem.class)));
+		try {
+			var csvFormat = CSVFormat.DEFAULT.builder()
+				.setCommentMarker('#')
+				.setIgnoreSurroundingSpaces(true)
+				.setIgnoreEmptyLines(true)
+				.setAllowMissingColumnNames(false)
+				.setDuplicateHeaderMode(DuplicateHeaderMode.DISALLOW)
+				.setHeader()	// uses first row as header mapping
+				.get();
+			try (
+				var strm = Util.getResourceAsInputStream(CONFIGURATION_RESOURCE);
+				var rdr = new InputStreamReader(strm, Util.CHARSET);
+				var records = csvFormat.parse(rdr);
+			) {
+				for (var record : records) {
+					var paramName = record.get("PARAMETER");
+					var portalValue = record.get(KnackApp.VASO_PORTAL.toString());
+					var ssValue = record.get(KnackApp.SCORE_SCOPE.toString());
+					var configItem = ConfigItem.valueOf(paramName);
+					configValues.get(KnackApp.VASO_PORTAL).put(configItem, portalValue);
+					configValues.get(KnackApp.SCORE_SCOPE).put(configItem, ssValue);
+				}
+			} catch (IOException ex) {
+				throw new UncheckedIOException(ex);
+			}
+		} catch (RuntimeException ex) {
+			ex.printStackTrace();
 		}
-		return "scene_%1$s/views/view_%2$s".formatted(viewNums[0], viewNums[1]);
 	}
 
-	public String getKnackFieldId(KnackApp knackApp, Field field) {
-		return props.getProperty("field.%1$s.%2$s".formatted(field, knackApp));
+	public String get(KnackApp knackApp, ConfigItem configItem) {
+		return configValues.get(knackApp).get(configItem);
 	}
 }

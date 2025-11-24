@@ -28,9 +28,9 @@ public class KnackTask extends Task<Void> {
 			PortalUserToken.inst().initialize(knackApp, userName, password);
 
 			updateMessage("Fetching the list of tournaments...");
-			var tournamentRetriever = TournamentRetrieverFactory.create(knackApp);
-			//tournamentRetriever.saveRawReport("tournaments");
-			WizardData.inst().replaceTournaments(tournamentRetriever.retrieveReport());
+			var trackRetriever = TrackRetrieverFactory.create(knackApp);
+			//trackRetriever.saveRawReport("tracks");
+			WizardData.inst().replaceTracks(trackRetriever.retrieveReport());
 
 			updateMessage("Fetching the list of teams...");
 			var teamResultsRetriever = TeamResultsRetrieverFactory.create(knackApp);
@@ -38,9 +38,9 @@ public class KnackTask extends Task<Void> {
 			WizardData.inst().replaceTeamResults(teamResultsRetriever.retrieveReport());
 
 			updateMessage("Fetching team ranks in each event...");
-			var teamRankByEventRetriever = TeamRankByEventRetrieverFactory.create(knackApp);
-			//teamRankByEventRetriever.saveRawReport("ranks");
-			WizardData.inst().replaceRanks(teamRankByEventRetriever.retrieveReport());
+			var rankByEventRetriever = RankByEventRetrieverFactory.create(knackApp);
+			//rankByEventRetriever.saveRawReport("ranks");
+			WizardData.inst().replaceRanks(rankByEventRetriever.retrieveReport());
 
 			updateMessage("Data retrieval complete.");
 			hasSucceeded = true;

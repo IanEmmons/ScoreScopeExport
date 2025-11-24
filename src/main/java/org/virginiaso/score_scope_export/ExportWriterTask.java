@@ -21,15 +21,18 @@ public class ExportWriterTask extends Task<Void> {
 	@Override
 	protected Void call() {
 		try {
-			updateMessage("Exporting %1$s, Division %2$s to Duosmium...".formatted(
-				WizardData.inst().selectedTournament.get(),
-				WizardData.inst().selectedDivision.get()));
+			var selectedTrackId = WizardData.inst().selectedTrackId.get();
+			var selectedTrack = WizardData.inst().getTrackById(selectedTrackId)
+				.orElseThrow(() -> new IllegalStateException(
+					"No tournaments with ID " + selectedTrackId));
 
-			var exportWriter = new ExportWriter(outputFile,
-				WizardData.inst().selectedTournament.get(),
-				WizardData.inst().selectedDivision.get());
-			exportWriter.writeExport(WizardData.inst().tournaments,
-				WizardData.inst().teamResults, WizardData.inst().teamRanksByEvent);
+			updateMessage("Exporting %1$s (Division %2$s) to Duosmium...".formatted(
+				selectedTrack.name(),
+				selectedTrack.division()));
+
+			var exportWriter = new ExportWriter(outputFile, selectedTrack);
+			exportWriter.writeExport(WizardData.inst().teamResults,
+				WizardData.inst().ranksByEvent);
 
 			updateMessage("Duosmium export complete.");
 			hasSucceeded = true;

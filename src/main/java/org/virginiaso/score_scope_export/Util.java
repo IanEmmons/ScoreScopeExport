@@ -1,17 +1,12 @@
 package org.virginiaso.score_scope_export;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 import java.util.MissingResourceException;
-import java.util.Properties;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.regex.Pattern;
@@ -86,19 +81,6 @@ public class Util {
 			throw new MissingResourceException(null, null, resourceName);
 		}
 		return result;
-	}
-
-	public static Properties loadPropertiesFromResource(String resourceName) {
-		try (
-			InputStream is = Util.getResourceAsInputStream(resourceName);
-			Reader rdr = new InputStreamReader(is, CHARSET);
-		) {
-			Properties props = new Properties(System.getProperties());
-			props.load(rdr);
-			return props;
-		} catch (IOException ex) {
-			throw new UncheckedIOException(ex);
-		}
 	}
 
 	public static <T> Stream<T> asStream(Iterable<T> it) {

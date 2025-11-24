@@ -6,18 +6,16 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-public record Tournament(
-	String id,
+public record Track(
+	String trackId,
 	String name,
 	Instant date,
 	TournamentLevel tournamentLevel,
+	String division,
 	boolean oneTrophyPerSchool,
-	int numBBids,
-	int numCBids,
-	int numBMedalsPerEvent,
-	int numCMedalsPerEvent,
-	int numBTrophies,
-	int numCTrophies) {
+	int numSchoolsProgressing,
+	int numMedalsPerEvent,
+	int numTrophies) {
 
 	public String formattedDate() {
 		return DateTimeFormatter
@@ -35,23 +33,5 @@ public record Tournament(
 			++year;
 		}
 		return year;
-	}
-
-	public int numBids(String division) {
-		return "B".equals(division)
-			? numBBids()
-			: numCBids();
-	}
-
-	public int numMedalsPerEvent(String division) {
-		return "B".equals(division)
-			? numBMedalsPerEvent()
-			: numCMedalsPerEvent();
-	}
-
-	public int numTrophies(String division) {
-		return "B".equals(division)
-			? numBTrophies()
-			: numCTrophies();
 	}
 }

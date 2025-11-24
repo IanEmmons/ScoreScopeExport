@@ -1,0 +1,34 @@
+PARAMETER,											VASO_PORTAL,					SCORE_SCOPE
+
+# ID of the Knack application:
+APPLICATION_ID,									648d0fcf2458250028b97840,	652ead5e0d05db00275daab7
+
+# Knack Scene ID in which the views below appear:
+DUOSMIUM_SCENE,									scene_704,						scene_697
+
+# Knack View IDs:
+RANKS_VIEW,											view_1915,						view_1878
+TEAM_RESULTS_VIEW,								view_1914,						view_1877
+TOURNAMENT_TRACKS_VIEW,							view_2421,						view_1926
+
+# Knack Field IDs:
+EVENTS_BY_TRACK_EVENT_NAME,					field_1753,						field_1753
+RAW_SCORES_DUOSMIUM_RANK,						field_1981,						field_1981
+RAW_SCORES_IS_TRIAL_EVENT,						field_1718,						field_1718
+SCHOOL_CITY_STATE,								field_2048,						field_2037
+SCHOOL_AWARD_CEREMONY_NAME,					field_1862,						field_1862
+TEAMS_IS_EXHIBITION_TEAM,						field_1979,						field_1979
+TEAMS_PENALTY,										field_1947,						field_1947
+TEAMS_SUMMED_TEAM_POINT_SCORE,				field_1754,						field_1754
+TEAMS_TEAM_NAME,									field_1144,						field_2039
+TEAMS_TEAM_NUM,									field_1478,						field_1478
+TEAMS_TEAM_POINT_SCORE,							field_1948,						field_1948
+TEAMS_TOURNAMENT_TRACK,							field_2275,						field_1702
+TOURNAMENTS_IS_STATE_TOURNAMENT,				field_1844,						not_applicable
+TOURNAMENTS_ONE_TROPHY_PER,					not_applicable,				field_2020
+TOURNAMENTS_TOURNAMENT_DATE,					field_7,							field_7
+TOURNAMENT_TRACK_DIVISION,						field_2276,						field_12
+TOURNAMENT_TRACK_FULL_TOURNAMENT_NAME,		field_2272,						field_6
+TOURNAMENT_TRACK_NUM_MEDALS,					field_2274,						field_2055
+TOURNAMENT_TRACK_NUM_SCHOOLS_PROGRESSING,	field_2367,						not_applicable
+TOURNAMENT_TRACK_NUM_TROPHIES,				field_2315,						field_2056

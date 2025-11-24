@@ -28,40 +28,31 @@ public class ExportWriter {
 	private static final int DEFAULT_ZOOM = 140;
 
 	private final File outputFile;
-	private final String tournamentName;
-	private final String division;
+	private final Track track;
 	private Workbook workbook;
 	private EnumMap<Style, CellStyle> styles;
 
-	public ExportWriter(File outputFile, String tournamentName, String division) {
+	public ExportWriter(File outputFile, Track track) {
 		this.outputFile = Objects.requireNonNull(outputFile, "outputFile");
-		this.tournamentName = Objects.requireNonNull(tournamentName, "tournamentName");
-		this.division = Objects.requireNonNull(division, "division");
+		this.track = Objects.requireNonNull(track, "track");
 	}
 
-	public void writeExport(List<Tournament> allTournaments, List<TeamResults> allTeamResults,
-			List<TeamRankByEvent> allTeamRanksByEvent) throws IOException {
-		Tournament tournament = allTournaments.stream()
-			.filter(t -> tournamentName.equals(t.name()))
-			.findFirst()
-			.orElseThrow(() -> new IllegalStateException(
-				"No tournaments with name " + tournamentName));
+	public void writeExport(List<TeamResults> allTeamResults,
+			List<RankByEvent> allTeamRanksByEvent) throws IOException {
 		List<TeamResults> teamResults = allTeamResults.stream()
-			.filter(tr -> tournamentName.equals(tr.tournamentName()))
-			.filter(tr -> division.equals(tr.division()))
+			.filter(tr -> track.trackId().equals(tr.trackId()))
 			.toList();
-		List<TeamRankByEvent> ranks = allTeamRanksByEvent.stream()
-			.filter(r -> tournamentName.equals(r.tournamentName()))
-			.filter(r -> division.equals(r.division()))
+		List<RankByEvent> ranks = allTeamRanksByEvent.stream()
+			.filter(r -> track.trackId().equals(r.trackId()))
 			.toList();
 
 		try (Workbook wkbk = new XSSFWorkbook(XSSFWorkbookType.XLSX)) {
 			workbook = wkbk;
 			styles = Style.createCellStyles(workbook);
 
-			createOverviewSheet(tournament);
+			createOverviewSheet();
 			createEventSheet(ranks);
-			createTeamSheet(teamResults, tournament.tournamentLevel());
+			createTeamSheet(teamResults, track.tournamentLevel());
 			createPlacingsSheet(teamResults, ranks);
 			writeOutputFile();
 
@@ -70,25 +61,25 @@ public class ExportWriter {
 		}
 	}
 
-	private void createOverviewSheet(Tournament tournament) {
+	private void createOverviewSheet() {
 		var sheet = workbook.createSheet("1. General Instructions");
 		sheet.setZoom(DEFAULT_ZOOM);
 		var rowNum = 1;
 
-		addOverviewRow(sheet, ++rowNum, "1A. Name", tournamentNameForDuosmium(tournamentName));
+		addOverviewRow(sheet, ++rowNum, "1A. Name", tournamentNameForDuosmium(track.name()));
 		addOverviewRow(sheet, ++rowNum, "1B. Short Name", "");
 		addOverviewRow(sheet, ++rowNum, "1C. Location", "");
 		addOverviewRow(sheet, ++rowNum, "1D. State", "");
-		addOverviewRow(sheet, ++rowNum, "1E. Level", tournament.tournamentLevel().label());
-		addOverviewRow(sheet, ++rowNum, "1F. Division", division);
-		addOverviewRow(sheet, ++rowNum, "1G. Year", Integer.toString(tournament.competitionYear()));
-		addOverviewRow(sheet, ++rowNum, "1H. Date", tournament.formattedDate());
+		addOverviewRow(sheet, ++rowNum, "1E. Level", track.tournamentLevel().label());
+		addOverviewRow(sheet, ++rowNum, "1F. Division", track.division());
+		addOverviewRow(sheet, ++rowNum, "1G. Year", Integer.toString(track.competitionYear()));
+		addOverviewRow(sheet, ++rowNum, "1H. Date", track.formattedDate());
 		addOverviewRow(sheet, ++rowNum, "1I. Start Date", "");
 		addOverviewRow(sheet, ++rowNum, "1J. End Date", "");
-		addOverviewRow(sheet, ++rowNum, "1K. Awards Date", tournament.formattedDate());
-		addOverviewRow(sheet, ++rowNum, "1L. Medals", Integer.toString(tournament.numMedalsPerEvent(division)));
-		addOverviewRow(sheet, ++rowNum, "1M. Trophies", Integer.toString(tournament.numTrophies(division)));
-		addOverviewRow(sheet, ++rowNum, "1N. Bids", numBids(tournament, division));
+		addOverviewRow(sheet, ++rowNum, "1K. Awards Date", track.formattedDate());
+		addOverviewRow(sheet, ++rowNum, "1L. Medals", Integer.toString(track.numMedalsPerEvent()));
+		addOverviewRow(sheet, ++rowNum, "1M. Trophies", Integer.toString(track.numTrophies()));
+		addOverviewRow(sheet, ++rowNum, "1N. Bids", numBids());
 		addOverviewRow(sheet, ++rowNum, "1O. N-Offset", "0");
 		addOverviewRow(sheet, ++rowNum, "1P. Drops", "0");
 		addOverviewRow(sheet, ++rowNum, "1Q. Source", "");
@@ -102,9 +93,9 @@ public class ExportWriter {
 		return Pattern.compile(" *20[0-9][0-9] *").matcher(name).replaceAll(" ").strip();
 	}
 
-	private static String numBids(Tournament tournament, String division) {
-		var numBids = tournament.numBids(division);
-		return (numBids < 0) ? "" : Integer.toString(numBids);
+	private String numBids() {
+		var numSchoolsProgressing = track.numSchoolsProgressing();
+		return (numSchoolsProgressing < 0) ? "" : Integer.toString(numSchoolsProgressing);
 	}
 
 	private void addOverviewRow(Sheet sheet, int rowNum, String label, String value) {
@@ -120,10 +111,10 @@ public class ExportWriter {
 		valueCell.setCellValue(value);
 	}
 
-	private void createEventSheet(List<TeamRankByEvent> ranks) {
+	private void createEventSheet(List<RankByEvent> ranks) {
 		Map<String, Boolean> eventMap = ranks.stream().collect(Collectors.toMap(
-			TeamRankByEvent::eventForDuosmium,	// key mapper
-			TeamRankByEvent::isTrialEvent,		// value mapper
+			RankByEvent::eventForDuosmium,	// key mapper
+			RankByEvent::isTrialEvent,		// value mapper
 			(v1, _) -> v1,								// merge function - shouldn't be invoked
 			LinkedHashMap::new));					// map factory
 
@@ -179,7 +170,7 @@ public class ExportWriter {
 		addTitleRow(sheet, 1, Style.SUB_TITLE, SUB_TITLE_TEXT);
 	}
 
-	private void createPlacingsSheet(List<TeamResults> teamResults, List<TeamRankByEvent> ranks) {
+	private void createPlacingsSheet(List<TeamResults> teamResults, List<RankByEvent> ranks) {
 		var sheet = workbook.createSheet("5. Placings");
 		sheet.setZoom(DEFAULT_ZOOM);
 
@@ -209,9 +200,9 @@ public class ExportWriter {
 		}
 	}
 
-	private void addEventsToPlacings(Sheet placingsSheet, List<TeamRankByEvent> ranks) {
+	private void addEventsToPlacings(Sheet placingsSheet, List<RankByEvent> ranks) {
 		var events = ranks.stream()
-			.map(TeamRankByEvent::event)
+			.map(RankByEvent::event)
 			.collect(Collectors.toCollection(() -> new LinkedHashSet<>()));
 
 		var firstRow = placingsSheet.getRow(2);
@@ -226,12 +217,12 @@ public class ExportWriter {
 	private static int PLACINGS_ROW_OFFSET = 3;
 	private static int PLACINGS_COL_OFFSET = 3;
 	private void addPlacings(Sheet placingsSheet, List<TeamResults> teamResults,
-		List<TeamRankByEvent> ranks) {
+		List<RankByEvent> ranks) {
 		var teamNums = teamResults.stream()
 			.map(TeamResults::teamNum)
 			.toList();
 		var events = ranks.stream()
-			.map(TeamRankByEvent::event)
+			.map(RankByEvent::event)
 			.collect(Collectors.toCollection(() -> new LinkedHashSet<>()))
 			.stream()
 			.toList();

@@ -8,9 +8,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.tuple.Pair;
 
 public record TeamResults(
-		String tournamentId,
-		String tournamentName,
-		String division,
+		String trackId,
 		String teamId,
 		String teamNum,
 		String schoolName,

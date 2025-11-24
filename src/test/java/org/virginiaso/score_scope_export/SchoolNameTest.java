@@ -12,7 +12,7 @@ public class SchoolNameTest {
 	@ParameterizedTest
 	@CsvFileSource(resources = "/schoolNames.txt", numLinesToSkip = 1, delimiter = '|')
 	public void testDuosmiumSchoolName(String input, String expected, String abbrevName) {
-		var team = new TeamResults("", "", "", "", "", input, "", ",", false,
+		var team = new TeamResults("", "", "", input, "", ",", false,
 			BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
 
 		assertEquals(expected, team.schoolNameForDuosmium());

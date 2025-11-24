@@ -22,8 +22,8 @@ public class TeamResultsRetrieverFactory {
 			this.knackApp = Objects.requireNonNull(knackApp, "knackApp");
 		}
 
-		private String field(Field field) {
-			return Config.inst().getKnackFieldId(knackApp, field);
+		private String field(ConfigItem field) {
+			return Config.inst().get(knackApp, field);
 		}
 
 		@Override
@@ -31,41 +31,52 @@ public class TeamResultsRetrieverFactory {
 				JsonDeserializationContext context) throws JsonParseException {
 			var jObj = json.getAsJsonObject();
 
-			var tournamentId = Util.normalizeSpace(jObj
-				.get(field(Field.TOURNAMENTS_TOURNAMENT)).getAsJsonArray().get(0)
-				.getAsJsonObject().get("id").getAsString());
-			var tournamentName = Util.normalizeSpace(jObj
-				.get(field(Field.TOURNAMENTS_TOURNAMENT)).getAsJsonArray().get(0)
-				.getAsJsonObject().get("identifier").getAsString());
+			var trackId = getTrackId(jObj);
 			var teamId = Util.normalizeSpace(jObj.get("id").getAsString());
 			var teamNum = Util.normalizeSpace(jObj
-				.get(field(Field.TEAMS_TEAM_NUM)).getAsString());
+				.get(field(ConfigItem.TEAMS_TEAM_NUM)).getAsString());
 			var schoolName = Util.normalizeSpace(jObj
-				.get(field(Field.SCHOOL_SCHOOL_NAME)).getAsString());
+				.get(field(ConfigItem.SCHOOL_AWARD_CEREMONY_NAME)).getAsString());
 			var teamName = Util.normalizeSpace(jObj
-				.get(field(Field.TEAMS_TEAM_NAME)).getAsString());
+				.get(field(ConfigItem.TEAMS_TEAM_NAME)).getAsString());
 			var cityState = Util.normalizeSpace(jObj
-				.get(field(Field.SCHOOL_CITY_STATE)).getAsString());
+				.get(field(ConfigItem.SCHOOL_CITY_STATE)).getAsString());
 			var isExhibitionTeam = Util.getAsBoolean(jObj
-				.get(field(Field.TEAMS_EXHIBITION_TEAM)));
+				.get(field(ConfigItem.TEAMS_IS_EXHIBITION_TEAM)));
 			var scoreNoPenalty = Util.getAsBigDecimal(jObj
-				.get(field(Field.TEAMS_SUMMED_TEAM_POINT_SCORE)));
-			var penalty = Util.getAsBigDecimal(jObj.get(field(Field.TEAMS_PENALTY)));
+				.get(field(ConfigItem.TEAMS_SUMMED_TEAM_POINT_SCORE)));
+			var penalty = Util.getAsBigDecimal(jObj.get(field(ConfigItem.TEAMS_PENALTY)));
 			var finalScore = Util.getAsBigDecimal(jObj
-				.get(field(Field.TEAMS_TEAM_POINT_SCORE)));
-			return new TeamResults(tournamentId, tournamentName, getDivision(jObj), teamId,
+				.get(field(ConfigItem.TEAMS_TEAM_POINT_SCORE)));
+			return new TeamResults(trackId, teamId,
 				teamNum, schoolName, teamName, cityState, isExhibitionTeam, scoreNoPenalty,
 				penalty, finalScore);
 		}
 
-		private String getDivision(JsonObject jObj) {
-			if (KnackApp.SCORE_SCOPE == knackApp) {
+		/**
+		 * The VASO Portal branch of this function follows the expected pattern in which
+		 * the Knack grid returns a JSON structure for a foreign key that contains the row
+		 * ID of the connected row in the referenced table (Tournament Track in this case).
+		 *
+		 * Unfortunately, in ScoreScope (where the referenced table is Division), Knack
+		 * doesn't follow the pattern. It just gives us the division label (no row ID), and
+		 * so we look up the division label in the list of tracks and get the ID from there.
+		 */
+		private String getTrackId(JsonObject jObj) {
+			if (KnackApp.VASO_PORTAL == knackApp) {
 				return Util.normalizeSpace(jObj
-					.get(field(Field.DIVISION_DIVISION)).getAsString());
+					.get(field(ConfigItem.TEAMS_TOURNAMENT_TRACK)).getAsJsonArray().get(0)
+					.getAsJsonObject().get("id").getAsString());
 			} else {
-				return Util.normalizeSpace(jObj
-					.get(field(Field.DIVISION_DIVISION)).getAsJsonArray().get(0)
-					.getAsJsonObject().get("identifier").getAsString());
+				var divLabel = Util.normalizeSpace(jObj
+					.get(field(ConfigItem.TOURNAMENT_TRACK_DIVISION)).getAsString());
+
+				return WizardData.inst().tracks.stream()
+					.filter(track -> Objects.equals(track.division(), divLabel))
+					.findFirst()
+					.orElseThrow(() -> new IllegalStateException(
+						"None of the tracks has division '%1$s'".formatted(divLabel)))
+					.trackId();
 			}
 		}
 	}
@@ -77,7 +88,7 @@ public class TeamResultsRetrieverFactory {
 			.setPrettyPrinting()
 			.registerTypeAdapter(TeamResults.class, new TeamResultsSerializer(knackApp))
 			.create();
-		return new PortalRetriever<>(gson, knackApp, KnackView.TEAM_RESULTS,
+		return new PortalRetriever<>(gson, knackApp, ConfigItem.TEAM_RESULTS_VIEW,
 			new TypeToken<ReportResponse<TeamResults>>(){}.getType());
 	}
 }

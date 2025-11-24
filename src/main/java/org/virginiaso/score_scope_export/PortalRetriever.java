@@ -40,21 +40,21 @@ public class PortalRetriever<Item> {
 	}
 
 	private static final String REPORT_URL = "https://api.knack.com/v1/pages/"
-		+ "%1$s/records?format=raw&page=%2$d&rows_per_page=%3$d";
+		+ "%1$s/views/%2$s/records?format=raw&page=%3$d&rows_per_page=%4$d";
 	private static final int PAGE_SIZE = 100;
 
 	// From the config and factory:
 	private final Type reportResponseType;
 	private final Gson gson;
 	private final KnackApp knackApp;
-	private final KnackView knackView;
+	private final ConfigItem knackView;
 
 	// Computed here:
 	private int totalPages;
 	private int lastPageRead;	// 1-based
 	private List<Item> reportItems;
 
-	public PortalRetriever(Gson gson, KnackApp knackApp, KnackView knackView, Type reportResponseType) {
+	public PortalRetriever(Gson gson, KnackApp knackApp, ConfigItem knackView, Type reportResponseType) {
 		this.reportResponseType = reportResponseType;
 		this.gson = gson;
 		this.knackApp = knackApp;
@@ -83,12 +83,13 @@ public class PortalRetriever<Item> {
 	}
 
 	private HttpRequest getHttpRequest(int currentPage) {
-		var url = REPORT_URL.formatted(Config.inst().getKnackUrlPath(knackApp, knackView),
-			currentPage, PAGE_SIZE);
+		var sceneId = Config.inst().get(knackApp, knackView.getAssociatedScene());
+		var viewId = Config.inst().get(knackApp, knackView);
+		var url = REPORT_URL.formatted(sceneId, viewId, currentPage, PAGE_SIZE);
 		return HttpRequest.newBuilder(URI.create(url))
 			.GET()
 			.header("Accept", Util.JSON_MEDIA_TYPE)
-			.header("X-Knack-Application-Id", Config.inst().getKnackAppId(knackApp))
+			.header("X-Knack-Application-Id", Config.inst().get(knackApp, ConfigItem.APPLICATION_ID))
 			.header("X-Knack-REST-API-KEY", "knack")
 			.header("Authorization", PortalUserToken.inst().getUserToken())
 			.build();

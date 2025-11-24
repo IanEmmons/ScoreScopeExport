@@ -3,6 +3,8 @@ package org.virginiaso.score_scope_export;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
@@ -31,16 +33,21 @@ public class WizardData {
 	public final Property<KnackApp> knackApp = new SimpleObjectProperty<>();
 	public final StringProperty userName = new SimpleStringProperty();
 	public final StringProperty password = new SimpleStringProperty();
-	public final List<Tournament> tournaments = new ArrayList<>();
+	public final List<Track> tracks = new ArrayList<>();
 	public final List<TeamResults> teamResults = new ArrayList<>();
-	public final List<TeamRankByEvent> teamRanksByEvent = new ArrayList<>();
-	public final StringProperty selectedTournament = new SimpleStringProperty();
-	public final StringProperty selectedDivision = new SimpleStringProperty();
+	public final List<RankByEvent> ranksByEvent = new ArrayList<>();
+	public final StringProperty selectedTrackId = new SimpleStringProperty();
 
-	public void replaceTournaments(List<Tournament> newValues) {
-		tournaments.clear();
-		tournaments.addAll(newValues);
-		tournaments.sort(Comparator.comparing(Tournament::name));
+	public Optional<Track> getTrackById(String trackId) {
+		return tracks.stream()
+			.filter(track -> Objects.equals(track.trackId(), trackId))
+			.findFirst();
+	}
+
+	public void replaceTracks(List<Track> newValues) {
+		tracks.clear();
+		tracks.addAll(newValues);
+		tracks.sort(Comparator.comparing(Track::name));
 	}
 
 	public void replaceTeamResults(List<TeamResults> newValues) {
@@ -48,8 +55,8 @@ public class WizardData {
 		teamResults.addAll(newValues);
 	}
 
-	public void replaceRanks(List<TeamRankByEvent> newValues) {
-		teamRanksByEvent.clear();
-		teamRanksByEvent.addAll(newValues);
+	public void replaceRanks(List<RankByEvent> newValues) {
+		ranksByEvent.clear();
+		ranksByEvent.addAll(newValues);
 	}
 }

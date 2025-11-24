@@ -11,6 +11,7 @@ val javaFxVersion = "26-ea+13"
 val isIntelArchitecture = false
 
 dependencies {
+	implementation("org.apache.commons:commons-csv:1.14.1")
 	implementation("org.apache.commons:commons-lang3:3.19.0")
 	implementation("com.google.code.gson:gson:2.13.2")
 	implementation("org.apache.poi:poi-ooxml:5.4.1")
