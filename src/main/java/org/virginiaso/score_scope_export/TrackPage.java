@@ -6,6 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.GridPane;
@@ -55,7 +56,12 @@ public class TrackPage extends WizardPage {
 			addRadioButton(track, toggleGroup, trackChoicePane));
 		toggleGroup.selectToggle(toggleGroup.getToggles().getFirst());
 
-		grid.add(trackChoicePane, 0, ++rowIndex, 2, 1);
+		var scrollPane = new ScrollPane(trackChoicePane);
+		scrollPane.setFitToWidth(true);
+		scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+
+		grid.add(scrollPane, 0, ++rowIndex, 2, 1);
 
 		return grid;
 	}

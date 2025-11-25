@@ -25,7 +25,7 @@ public class ExportApplication extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Export Tournament Results to Duosmium");
 		var wizard = new ExportWizard(primaryStage);
-		primaryStage.setScene(new Scene(wizard, 640, 600));
+		primaryStage.setScene(new Scene(wizard, 640, 480));
 		primaryStage.show();
 	}
 }
