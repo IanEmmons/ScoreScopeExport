@@ -33,10 +33,15 @@ java {
 	toolchain {
 		languageVersion.set(JavaLanguageVersion.of(25))
 	}
+	withJavadocJar()
+}
+
+tasks.withType<Javadoc>().configureEach {
+	(options as StandardJavadocDocletOptions).addBooleanOption("Xdoclint:none", true)
 }
 
 tasks.jar {
-	manifest.attributes["Main-Class"] = "org.virginiaso.score_scope_export.Launcher"
+	manifest.attributes["Main-Class"] = "org.virginiaso.duosmiator.Launcher"
 	from(configurations
 		.runtimeClasspath
 		.get()
@@ -55,7 +60,7 @@ javafx {
 }
 
 application {
-	mainClass.set("org.virginiaso.score_scope_export.ExportApplication")
+	mainClass.set("org.virginiaso.duosmiator.ExportApplication")
 }
 
 testing {

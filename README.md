@@ -1,7 +1,7 @@
-# VASO ScoreScope Exporter
+# VASO Duosmiator
 
-Code to export tournament results from ScoreScope to Duosmium.
+Code to export tournament results from either the VASO Portal or ScoreScope to Duosmium.
 
 ## To-Do
 
-- Show correct division(s) for each tournament
+- (None)
