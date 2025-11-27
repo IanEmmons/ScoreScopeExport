@@ -3,12 +3,14 @@ plugins {
 	id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
+group = "org.virginiaso.duosmiator"
+version = "1.1.0"
+val javaFxVersion = "26-ea+17"
+val isIntelArchitecture = false
+
 repositories {
 	mavenCentral()
 }
-
-val javaFxVersion = "26-ea+17"
-val isIntelArchitecture = false
 
 dependencies {
 	implementation("org.apache.commons:commons-csv:1.14.1")
@@ -41,7 +43,14 @@ tasks.withType<Javadoc>().configureEach {
 }
 
 tasks.jar {
-	manifest.attributes["Main-Class"] = "org.virginiaso.duosmiator.Launcher"
+	manifest {
+		attributes(
+			"Implementation-Title" to "Duosmiator",
+			"Implementation-Vendor" to "Virginia Science Olympiad (VASO)",
+			"Implementation-Version" to project.version,
+			"Main-Class" to "org.virginiaso.duosmiator.Launcher"
+		)
+	}
 	from(configurations
 		.runtimeClasspath
 		.get()
