@@ -3,4 +3,4 @@
 SCRIPT_DIR=$(dirname "$0")
 
 xattr -c ${SCRIPT_DIR}/duosmiator-*.jar
-java --enable-native-access=javafx.graphics -jar ${SCRIPT_DIR}/duosmiator-*.jar &
+java --enable-native-access=ALL-UNNAMED -jar ${SCRIPT_DIR}/duosmiator-*.jar &
