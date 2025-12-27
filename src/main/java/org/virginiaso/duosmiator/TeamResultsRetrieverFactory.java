@@ -16,14 +16,14 @@ import com.google.gson.reflect.TypeToken;
 
 public class TeamResultsRetrieverFactory {
 	private static class TeamResultsSerializer implements JsonDeserializer<TeamResults> {
-		private KnackApp knackApp;
+		private KnackAppType appType;
 
-		public TeamResultsSerializer(KnackApp knackApp) {
-			this.knackApp = Objects.requireNonNull(knackApp, "knackApp");
+		public TeamResultsSerializer(KnackAppType appType) {
+			this.appType = Objects.requireNonNull(appType, "appType");
 		}
 
 		private String field(ConfigItem field) {
-			return Config.inst().get(knackApp, field);
+			return Config.inst().get(appType, field);
 		}
 
 		@Override
@@ -61,7 +61,7 @@ public class TeamResultsRetrieverFactory {
 		/// doesn't follow the pattern. It just gives us the division label (no row ID), and
 		/// so we look up the division label in the list of tracks and get the ID from there.
 		private String getTrackId(JsonObject jObj) {
-			if (KnackApp.VASO_PORTAL == knackApp) {
+			if (KnackAppType.VASO_PORTAL == appType) {
 				return Util.normalizeSpace(jObj
 					.get(field(ConfigItem.TEAMS_TOURNAMENT_TRACK)).getAsJsonArray().get(0)
 					.getAsJsonObject().get("id").getAsString());
@@ -81,12 +81,12 @@ public class TeamResultsRetrieverFactory {
 
 	private TeamResultsRetrieverFactory() {}	// prevent instantiation
 
-	public static PortalRetriever<TeamResults> create(KnackApp knackApp) {
+	public static PortalRetriever<TeamResults> create(KnackAppInstance appInstance) {
 		Gson gson = new GsonBuilder()
 			.setPrettyPrinting()
-			.registerTypeAdapter(TeamResults.class, new TeamResultsSerializer(knackApp))
+			.registerTypeAdapter(TeamResults.class, new TeamResultsSerializer(appInstance.type()))
 			.create();
-		return new PortalRetriever<>(gson, knackApp, ConfigItem.TEAM_RESULTS_VIEW,
+		return new PortalRetriever<>(gson, appInstance, ConfigItem.TEAM_RESULTS_VIEW,
 			new TypeToken<ReportResponse<TeamResults>>(){}.getType());
 	}
 }

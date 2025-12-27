@@ -46,7 +46,7 @@ public class PortalRetriever<Item> {
 	// From the config and factory:
 	private final Type reportResponseType;
 	private final Gson gson;
-	private final KnackApp knackApp;
+	private final KnackAppInstance appInstance;
 	private final ConfigItem knackView;
 
 	// Computed here:
@@ -54,10 +54,10 @@ public class PortalRetriever<Item> {
 	private int lastPageRead;	// 1-based
 	private List<Item> reportItems;
 
-	public PortalRetriever(Gson gson, KnackApp knackApp, ConfigItem knackView, Type reportResponseType) {
+	public PortalRetriever(Gson gson, KnackAppInstance appInstance, ConfigItem knackView, Type reportResponseType) {
 		this.reportResponseType = reportResponseType;
 		this.gson = gson;
-		this.knackApp = knackApp;
+		this.appInstance = appInstance;
 		this.knackView = knackView;
 
 		totalPages = -1;
@@ -83,13 +83,13 @@ public class PortalRetriever<Item> {
 	}
 
 	private HttpRequest getHttpRequest(int currentPage) {
-		var sceneId = Config.inst().get(knackApp, knackView.getAssociatedScene());
-		var viewId = Config.inst().get(knackApp, knackView);
+		var sceneId = Config.inst().get(appInstance, knackView.getAssociatedScene());
+		var viewId = Config.inst().get(appInstance, knackView);
 		var url = REPORT_URL.formatted(sceneId, viewId, currentPage, PAGE_SIZE);
 		return HttpRequest.newBuilder(URI.create(url))
 			.GET()
 			.header("Accept", Util.JSON_MEDIA_TYPE)
-			.header("X-Knack-Application-Id", Config.inst().get(knackApp, ConfigItem.APPLICATION_ID))
+			.header("X-Knack-Application-Id", appInstance.id())
 			.header("X-Knack-REST-API-KEY", "knack")
 			.header("Authorization", PortalUserToken.inst().getUserToken())
 			.build();
@@ -109,7 +109,7 @@ public class PortalRetriever<Item> {
 	}
 
 	public void saveRawReport(String reportName) {
-		var fileName = "raw-%1$s-%2$s-report-body.json".formatted(knackApp, reportName);
+		var fileName = "raw-%1$s-%2$s-report-body.json".formatted(appInstance.type(), reportName);
 		var httpRequest = getHttpRequest(1);
 		try (var httpClient = HttpClient.newHttpClient()) {
 			httpClient

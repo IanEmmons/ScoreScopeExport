@@ -1,7 +1,6 @@
 package org.virginiaso.duosmiator;
 
 public enum ConfigItem {
-	APPLICATION_ID,
 	DUOSMIUM_SCENE,
 	TOURNAMENT_TRACKS_VIEW(DUOSMIUM_SCENE),
 	TEAM_RESULTS_VIEW(DUOSMIUM_SCENE),

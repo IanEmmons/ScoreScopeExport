@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Border;
@@ -41,6 +42,7 @@ public class LoginPage extends WizardPage {
 		var userNameLbl = new Label("_User Name:");
 		userNameLbl.setMnemonicParsing(true);
 		var userNameBox = new TextField();
+		userNameBox.textProperty().setValue(WizardData.inst().userName.get());
 		WizardData.inst().userName.bind(userNameBox.textProperty());
 		userNameLbl.setLabelFor(userNameBox);
 		grid.add(userNameLbl, 0, ++rowIndex);
@@ -59,38 +61,42 @@ public class LoginPage extends WizardPage {
 		return grid;
 	}
 
-	private static TilePane getAppSelectionPane() {
+	private static ScrollPane getAppSelectionPane() {
+		var appInstances = KnackAppInstance.getAppInstances();
+
 		var appChoiceLabel = new Label("Choose the tournament scoring application:");
+		var appInstPane = new TilePane();
+		appInstPane.setOrientation(Orientation.VERTICAL);
+		appInstPane.setTileAlignment(Pos.TOP_LEFT);
+		appInstPane.setPadding(new Insets(5, 5, 5, 5));
+		appInstPane.setVgap(5);
+		appInstPane.setBorder(Border.stroke(null));
+		appInstPane.setPrefRows(appInstances.size() + 1);
+		appInstPane.setPrefColumns(1);
+		appInstPane.getChildren().add(appChoiceLabel);
 
-		var rb1 = new RadioButton("_ScoreScope");
-		rb1.setMnemonicParsing(true);
-		rb1.setUserData(KnackApp.SCORE_SCOPE);
-
-		var rb2 = new RadioButton("_VASO Division B/C Portal");
-		rb2.setUserData(KnackApp.VASO_PORTAL);
-		rb2.setMnemonicParsing(true);
-
-		var knackAppGroup = new ToggleGroup();
-		rb1.setToggleGroup(knackAppGroup);
-		rb2.setToggleGroup(knackAppGroup);
-		knackAppGroup.selectedToggleProperty().addListener((_, _, newValue) -> {
-			WizardData.inst().knackApp.setValue((KnackApp) newValue.getUserData());
+		var appInstGroup = new ToggleGroup();
+		appInstGroup.selectedToggleProperty().addListener((_, _, newValue) -> {
+			WizardData.inst().appInstance.setValue((KnackAppInstance) newValue.getUserData());
 		});
-		knackAppGroup.selectToggle(knackAppGroup.getToggles().getFirst());
 
-		var knackAppPane = new TilePane();
-		knackAppPane.setOrientation(Orientation.VERTICAL);
-		knackAppPane.setTileAlignment(Pos.TOP_LEFT);
-		knackAppPane.setPadding(new Insets(5, 5, 5, 5));
-		knackAppPane.setVgap(5);
-		knackAppPane.setBorder(Border.stroke(null));
-		knackAppPane.setPrefRows(3);
-		knackAppPane.setPrefColumns(1);
-		knackAppPane.getChildren().add(appChoiceLabel);
-		knackAppPane.getChildren().add(rb1);
-		knackAppPane.getChildren().add(rb2);
+		appInstances.forEach(appInstance ->
+			addRadioButton(appInstance, appInstGroup, appInstPane));
+		appInstGroup.selectToggle(appInstGroup.getToggles().getFirst());
 
-		return knackAppPane;
+		var scrollPane = new ScrollPane(appInstPane);
+		scrollPane.setFitToWidth(true);
+		scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+
+		return scrollPane;
+	}
+
+	private static void addRadioButton(KnackAppInstance appInstance, ToggleGroup group, TilePane pane) {
+		var rb = new RadioButton(appInstance.name());
+		rb.setUserData(appInstance);
+		rb.setToggleGroup(group);
+		pane.getChildren().add(rb);
 	}
 
 	@Override
@@ -101,18 +107,18 @@ public class LoginPage extends WizardPage {
 
 	@Override
 	public void nextPage() {
-		var knackApp = WizardData.inst().knackApp.getValue();
+		var appInstance = WizardData.inst().appInstance.getValue();
 		var userName = WizardData.inst().userName.getValue();
 		var password = WizardData.inst().password.getValue();
-		if (knackApp == null) {
+		if (appInstance == null) {
 			Alerts.show("Missing input",
-				"You must choose an application, either ScoreScope or the VASO Portal.");
+				"You must choose an application, either the VASO Portal or one of the ScoreScopes.");
 		} else if (userName == null || userName.isBlank()) {
 			Alerts.show("Missing input", "You must provide a user name (usually an email address).");
 		} else if (password == null || password.isBlank()) {
 			Alerts.show("Missing input", "You must provide a password.");
 		} else {
-			var task = new KnackTask(knackApp, userName, password);
+			var task = new KnackTask(appInstance, userName, password);
 			var progress = Alerts.newProgressAlert(this, task);
 			ExportApplication.EXEC.execute(task);
 			progress.showAndWait();

@@ -54,7 +54,7 @@ public class FinalInstructionsPage extends WizardPage {
 		instructions.setFont(Font.font("Tahoma", FontWeight.NORMAL, 12));
 		instructions.setWrapText(true);
 		instructions.setText(INSTRUCTIONS.formatted(
-			WizardData.inst().knackApp.getValue().title()));
+			WizardData.inst().appInstance.getValue().name()));
 		grid.add(instructions, 0, ++rowIndex, 2, 1);
 
 		return grid;

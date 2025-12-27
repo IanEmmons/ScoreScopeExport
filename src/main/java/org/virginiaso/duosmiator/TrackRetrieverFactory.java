@@ -16,14 +16,14 @@ import com.google.gson.reflect.TypeToken;
 
 public class TrackRetrieverFactory {
 	private static class TrackSerializer implements JsonDeserializer<Track> {
-		private KnackApp knackApp;
+		private KnackAppType appType;
 
-		public TrackSerializer(KnackApp knackApp) {
-			this.knackApp = Objects.requireNonNull(knackApp, "knackApp");
+		public TrackSerializer(KnackAppType appType) {
+			this.appType = Objects.requireNonNull(appType, "appType");
 		}
 
 		private String field(ConfigItem field) {
-			return Config.inst().get(knackApp, field);
+			return Config.inst().get(appType, field);
 		}
 
 		@Override
@@ -45,7 +45,7 @@ public class TrackRetrieverFactory {
 		}
 
 		private TournamentLevel tournamentLevel(JsonObject jObj) {
-			if (KnackApp.VASO_PORTAL == knackApp) {
+			if (KnackAppType.VASO_PORTAL == appType) {
 				return Util.getAsBoolean(jObj.get(field(ConfigItem.TOURNAMENTS_IS_STATE_TOURNAMENT)))
 					? TournamentLevel.STATE
 					: TournamentLevel.REGIONAL;
@@ -56,7 +56,7 @@ public class TrackRetrieverFactory {
 
 		private String getDivision(JsonObject jObj) {
 			var divElement = jObj.get(field(ConfigItem.TOURNAMENT_TRACK_DIVISION));
-			if (KnackApp.VASO_PORTAL == knackApp) {
+			if (KnackAppType.VASO_PORTAL == appType) {
 				divElement = divElement.getAsJsonArray().get(0)
 					.getAsJsonObject().get("identifier");
 			}
@@ -64,7 +64,7 @@ public class TrackRetrieverFactory {
 		}
 
 		private boolean isOneTrophyPerSchool(JsonObject jObj) {
-			if (KnackApp.VASO_PORTAL == knackApp) {
+			if (KnackAppType.VASO_PORTAL == appType) {
 				return !Util.getAsBoolean(jObj.get(field(ConfigItem.TOURNAMENTS_IS_STATE_TOURNAMENT)));
 			} else {
 				var oneTrophyPer = jObj.get(field(ConfigItem.TOURNAMENTS_ONE_TROPHY_PER)).getAsString();
@@ -73,7 +73,7 @@ public class TrackRetrieverFactory {
 		}
 
 		private int numBids(JsonObject jObj, ConfigItem field) {
-			if (KnackApp.VASO_PORTAL == knackApp) {
+			if (KnackAppType.VASO_PORTAL == appType) {
 				var jPrim = jObj.get(field(field)).getAsJsonPrimitive();
 				return jPrim.isNumber() ? jPrim.getAsInt() : -1;
 			} else {
@@ -84,12 +84,12 @@ public class TrackRetrieverFactory {
 
 	private TrackRetrieverFactory() {}	// prevent instantiation
 
-	public static PortalRetriever<Track> create(KnackApp knackApp) {
+	public static PortalRetriever<Track> create(KnackAppInstance appInstance) {
 		Gson gson = new GsonBuilder()
 			.setPrettyPrinting()
-			.registerTypeAdapter(Track.class, new TrackSerializer(knackApp))
+			.registerTypeAdapter(Track.class, new TrackSerializer(appInstance.type()))
 			.create();
-		return new PortalRetriever<>(gson, knackApp, ConfigItem.TOURNAMENT_TRACKS_VIEW,
+		return new PortalRetriever<>(gson, appInstance, ConfigItem.TOURNAMENT_TRACKS_VIEW,
 			new TypeToken<ReportResponse<Track>>(){}.getType());
 	}
 }

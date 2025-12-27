@@ -26,7 +26,7 @@ public class WizardData {
 		return WizardDataHolder.INSTANCE;
 	}
 
-	public final Property<KnackApp> knackApp = new SimpleObjectProperty<>();
+	public final Property<KnackAppInstance> appInstance = new SimpleObjectProperty<>();
 	public final StringProperty userName = new SimpleStringProperty();
 	public final StringProperty password = new SimpleStringProperty();
 	public final List<Track> tracks = new ArrayList<>();

@@ -14,14 +14,14 @@ import com.google.gson.reflect.TypeToken;
 
 public class RankByEventRetrieverFactory {
 	private static class TeamRankByEventSerializer implements JsonDeserializer<RankByEvent> {
-		private KnackApp knackApp;
+		private KnackAppType appType;
 
-		public TeamRankByEventSerializer(KnackApp knackApp) {
-			this.knackApp = Objects.requireNonNull(knackApp, "knackApp");
+		public TeamRankByEventSerializer(KnackAppType appType) {
+			this.appType = Objects.requireNonNull(appType, "appType");
 		}
 
 		private String field(ConfigItem field) {
-			return Config.inst().get(knackApp, field);
+			return Config.inst().get(appType, field);
 		}
 
 		@Override
@@ -47,12 +47,12 @@ public class RankByEventRetrieverFactory {
 
 	private RankByEventRetrieverFactory() {}	// prevent instantiation
 
-	public static PortalRetriever<RankByEvent> create(KnackApp knackApp) {
+	public static PortalRetriever<RankByEvent> create(KnackAppInstance appInstance) {
 		Gson gson = new GsonBuilder()
 			.setPrettyPrinting()
-			.registerTypeAdapter(RankByEvent.class, new TeamRankByEventSerializer(knackApp))
+			.registerTypeAdapter(RankByEvent.class, new TeamRankByEventSerializer(appInstance.type()))
 			.create();
-		return new PortalRetriever<>(gson, knackApp, ConfigItem.RANKS_VIEW,
+		return new PortalRetriever<>(gson, appInstance, ConfigItem.RANKS_VIEW,
 			new TypeToken<ReportResponse<RankByEvent>>(){}.getType());
 	}
 }

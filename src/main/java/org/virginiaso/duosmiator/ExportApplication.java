@@ -18,6 +18,15 @@ public class ExportApplication extends Application {
 		});
 
 	public static void main(String[] args) {
+		var foundUserNameIntroducer = false;
+		for (var arg : args) {
+			if (foundUserNameIntroducer) {
+				WizardData.inst().userName.setValue(arg);
+				foundUserNameIntroducer = false;
+			} else if ("--username".equalsIgnoreCase(arg)) {
+				foundUserNameIntroducer = true;
+			}
+		}
 		launch(args);
 	}
 

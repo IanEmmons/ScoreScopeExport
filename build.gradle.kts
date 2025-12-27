@@ -5,7 +5,7 @@ plugins {
 
 group = "org.virginiaso.duosmiator"
 version = "1.1.0"
-val javaFxVersion = "26-ea+17"
+val javaFxVersion = "26-ea+19"
 val isIntelArchitecture = false
 
 repositories {
@@ -16,10 +16,10 @@ dependencies {
 	implementation("org.apache.commons:commons-csv:1.14.1")
 	implementation("org.apache.commons:commons-lang3:3.20.0")
 	implementation("com.google.code.gson:gson:2.13.2")
-	implementation("org.apache.poi:poi-ooxml:5.5.0")
+	implementation("org.apache.poi:poi-ooxml:5.5.1")
 
 	// This forces POI's log4j dependency to the latest 2.x version:
-	implementation("org.apache.logging.log4j:log4j-core:2.25.2")
+	implementation("org.apache.logging.log4j:log4j-core:2.25.3")
 
 	if (isIntelArchitecture) {
 		runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:linux")
@@ -68,6 +68,7 @@ javafx {
 	modules("javafx.controls")
 }
 
+// gw build run --args='--username ian@emmons.mobi'
 application {
 	mainClass.set("org.virginiaso.duosmiator.ExportApplication")
 }

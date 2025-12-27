@@ -3,7 +3,7 @@ package org.virginiaso.duosmiator;
 import javafx.stage.Stage;
 
 public class ExportWizard extends Wizard {
-	public static final String LOGIN_PAGE_ID = "Export tournament results to Duosmium";
+	public static final String LOGIN_PAGE_ID = "Export tournament results for Duosmium Upload";
 	public static final String TRACK_PAGE_ID = "Which tournament track?";
 	public static final String INSTRUCTIONS_PAGE_ID = "How to Use the Exported File";
 

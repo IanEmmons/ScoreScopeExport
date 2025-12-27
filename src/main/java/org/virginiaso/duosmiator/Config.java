@@ -16,7 +16,7 @@ public class Config {
 
 	private static final String CONFIGURATION_RESOURCE = "configuration.csv";
 
-	private final EnumMap<KnackApp, EnumMap<ConfigItem, String>> configValues;
+	private final EnumMap<KnackAppType, EnumMap<ConfigItem, String>> configValues;
 
 	/// Get the singleton instance of Config. This follows the "lazy initialization
 	/// holder class" idiom for lazy initialization of a static field. See Item 83 of
@@ -28,8 +28,8 @@ public class Config {
 	}
 
 	private Config() {
-		configValues = new EnumMap<>(KnackApp.class);
-		Arrays.stream(KnackApp.values())
+		configValues = new EnumMap<>(KnackAppType.class);
+		Arrays.stream(KnackAppType.values())
 			.forEach(app -> configValues.put(app, new EnumMap<>(ConfigItem.class)));
 		try {
 			var csvFormat = CSVFormat.DEFAULT.builder()
@@ -47,11 +47,11 @@ public class Config {
 			) {
 				for (var record : records) {
 					var paramName = record.get("PARAMETER");
-					var portalValue = record.get(KnackApp.VASO_PORTAL.toString());
-					var ssValue = record.get(KnackApp.SCORE_SCOPE.toString());
+					var portalValue = record.get(KnackAppType.VASO_PORTAL.toString());
+					var ssValue = record.get(KnackAppType.SCORE_SCOPE.toString());
 					var configItem = ConfigItem.valueOf(paramName);
-					configValues.get(KnackApp.VASO_PORTAL).put(configItem, portalValue);
-					configValues.get(KnackApp.SCORE_SCOPE).put(configItem, ssValue);
+					configValues.get(KnackAppType.VASO_PORTAL).put(configItem, portalValue);
+					configValues.get(KnackAppType.SCORE_SCOPE).put(configItem, ssValue);
 				}
 			} catch (IOException ex) {
 				throw new UncheckedIOException(ex);
@@ -61,7 +61,11 @@ public class Config {
 		}
 	}
 
-	public String get(KnackApp knackApp, ConfigItem configItem) {
-		return configValues.get(knackApp).get(configItem);
+	public String get(KnackAppType appType, ConfigItem configItem) {
+		return configValues.get(appType).get(configItem);
+	}
+
+	public String get(KnackAppInstance appInstance, ConfigItem configItem) {
+		return get(appInstance.type(), configItem);
 	}
 }

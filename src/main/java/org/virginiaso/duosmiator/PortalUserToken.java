@@ -36,9 +36,9 @@ public class PortalUserToken {
 		userToken = null;
 	}
 
-	public void initialize(KnackApp knackApp, String userName, String password) {
+	public void initialize(KnackAppInstance appInstance, String userName, String password) {
 		userToken = null;
-		var url = TOKEN_URL.formatted(Config.inst().get(knackApp, ConfigItem.APPLICATION_ID));
+		var url = TOKEN_URL.formatted(appInstance.id());
 		var requestBody = TOKEN_BODY.formatted(userName, password);
 		var httpRequest = HttpRequest.newBuilder(URI.create(url))
 			.POST(BodyPublishers.ofString(requestBody))
